@@ -1,0 +1,89 @@
+body {
+  margin: 0 auto;
+  margin-left: auto;
+	margin-right: auto;
+	font-family: 'IM Fell DW Pica', serif;
+  min-width: 800px; /*won't let page get narrower than this*/
+}
+
+.header {	
+font-family: 'IM Fell French Canon', serif;
+font-size: 100%;
+display: block;
+text-align: center;
+margin-left: auto;
+margin-right: auto;
+text-align: center
+border-color: black;
+width:800px; 
+}
+
+.header h1 {
+font-size: 400%;
+font-style: italic;
+text-align: center;
+margin-bottom: .01px;
+}
+
+.header h2 {
+font-size: 100%;
+text-align: center;
+margin-bottom: 10px;
+}
+
+canvas.center {   
+display: block;   
+margin-left: auto;   
+margin-right: auto; 
+}
+
+.picture {
+background-color: white;
+display: block;
+width: 900px;
+height: 480px;
+margin-left: auto;
+margin-right: auto;
+}
+
+.picture h1 {  /*spaces mean children (not nec. direct)*/
+font-size: 150%;
+display: inline;
+}
+
+.sentence {  /*period means class*/
+background-color: white;
+display: block;
+border-width:2px;	
+font-size: 150%;
+width: 900px;
+height: 200px;
+margin-left: auto;
+margin-right: auto;
+}
+
+#form { /*hash matches id*/
+width: 900px;
+height: 20px;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: 1em;
+}
+
+input[type=text] {
+width:400px;
+height:20px;
+font-family: 'IM Fell DW Pica', serif;
+font-size: 100%;
+}
+
+button {
+width:100px;
+margin-left: .5em;
+font-family: 'IM Fell DW Pica', serif;
+font-size: 100%;
+}
+
+
+
+
