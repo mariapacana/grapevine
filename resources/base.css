@@ -37,7 +37,7 @@ margin-left: auto;
 margin-right: auto; 
 }
 
-.picture {
+section {
 background-color: white;
 display: block;
 width: 900px;
@@ -46,7 +46,7 @@ margin-left: auto;
 margin-right: auto;
 }
 
-.picture h1 {  /*spaces mean children (not nec. direct)*/
+section h1 {  /*spaces mean children (not nec. direct)*/
 font-size: 150%;
 display: inline;
 }

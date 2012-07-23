@@ -3,6 +3,7 @@ require "cgi"
 require "sqlite3"
 require "uri"
 require "json"
+require "erb"
 
 =begin
 drop table if exists games;
@@ -46,10 +47,25 @@ def makenewgame(data, email)
 	end
 end
 
-def playturn(turn,email,game)
-	db = SQLite3::Database.new("picdata.db")
+def showturn(email,gameid)
+
+	#retrieves picture from database
+	db = SQLite3::Database.new("../picdata.db")
+	playerid = db.execute("select playerid from players where email = ?",email)
 	
-	db.execute("insert into games (turn) values (?)", turn)
+	params = [gameid, playerid]
+	turn = db.execute("select turn from gamestoplayers where gameid = ? and playerid = ?", params)
+	
+	params = [gameid, turn]
+	picdata = db.execute("select data from pics where gameid = ? and turn = ?", params)
+	
+	#shows picture via the erb template
+	template_data = IO.read('templates/picturn.html.erb')
+  template = ERB.new(template_data)
+  
+  #need to actually show the template. : /
+  puts template.result(binding)
+  
 end
 
 def main
@@ -67,7 +83,7 @@ def main
 		for i in email do i.strip! end
 		makenewgame(data, email)	
 	elsif (cmd == "showturn") 
-		error("you haven't made this yet")
+		showturn(email,gameid)
 	elsif (cmd == "playturn") 
 		error("you haven't made this yet")
 	else 
@@ -75,7 +91,8 @@ def main
 	end
 end
 
-main
+#main
+showturn("maria",1)
 
 =begin
 cgi.out() do 
@@ -83,14 +100,3 @@ cgi.out() do
 end
 =end
 
-=begin
-create table pics (
-	picid integer primary key, 
-	data blob);
-=end
-
-=begin
-aFile = File.new("picdata.txt", "w")
-aFile.write(data)
-aFile.close
-=end
