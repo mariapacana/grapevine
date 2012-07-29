@@ -47,16 +47,19 @@ function mousemove(e) {
 //- Save the pic and userid to the database.
 //- (For the next user) display a textbox to type in.
 function submitpic(e) {
-  //sendRequest("shoo.txt", "GET", null, function(data) { $("status").innerText = data; });
   
   var img = can.toDataURL("image/png");
   
   sendRequest("/cgi-bin/xhrtest.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&email="+$("email").value,
    	function(response) {
-   		//var data = JSON.parse(response);
-   		//console.log(data);
-   		//$("submittedimage").src = data.img;
-   		//console.log(JSON.parse(data));
+   		 $("status").innerText = "Game started!";
+   	});
+}
+
+function submitsentence(gameid, turn) {
+  sendRequest("/cgi-bin/xhrtest.rb", "POST", "cmd=sentence&sentence="+$("sentence").value+"&gameid="+gameid+"&turn="+turn,
+  	function(response) {
+  	  		 $("status").innerText = "Sentence sent!";
    	});
 }
 

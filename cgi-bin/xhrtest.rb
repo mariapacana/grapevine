@@ -14,6 +14,7 @@ drop table if exists players;
 CREATE TABLE games (gameid integer primary key, turn integer);
 CREATE TABLE gamestoplayers (gameid integer, playerid integer, turn integer, token integer);
 CREATE TABLE pics (picid integer primary key, data blob, gameid integer, turn integer);
+CREATE TABLE sentences (sentenceid integer primary key, sentence blob, gameid integer, turn integer);
 CREATE TABLE players (playerid integer primary key, email varchar(255), optedout integer);
 =end
 
@@ -64,6 +65,14 @@ def showturn(email,gameid)
   
   #need to actually show the template. : /
   $cgi.out() { template.result(binding) }
+  
+end
+
+def savesentence(sentence,gameid,turn)
+	db = SQLite3::Database.new("picdata.db")
+	db.execute("insert into sentences (sentence, gameid, turn) values (?,?,?)", [sentence, gameid, turn]) 
+	#Updates game table with latest turn, too.
+	
 end
 
 def main
@@ -82,19 +91,16 @@ def main
 		makenewgame(data, email)	
 	elsif (cmd == "showturn") 
 		showturn(email,gameid)
-	elsif (cmd == "playturn") 
-		error("you haven't made this yet")
+	elsif (cmd == "sentence") 
+		sentence = URI.unescape($params["sentence"][0]).to_s
+		gameid = URI.unescape($params["gameid"][0])
+		turn = URI.unescape($params["turn"][0]).to_i+1
+		savesentence(sentence,gameid,turn)
 	else 
 		error("or this")
 	end
 end
 
-#main
-showturn("maria",1)
+main
 
-=begin
-cgi.out() do 
-	{ 'img' => data, 'arg2' => "kittens"}.to_json
-end
-=end
 

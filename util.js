@@ -12,7 +12,8 @@ function sendRequest(url, method, data, callback) {
   	if (xhr.readyState == 4) {
   	  console.log("status=" + xhr.status + " text=" + xhr.responseText);
   	  if (xhr.status == 200) {
-      	callback(xhr.responseText);
+  	    if (callback)
+      	  callback(xhr.responseText);
       } else {
 				alert("Got error " + xhr.status + " from server: " + xhr.responseText);
       }
@@ -23,16 +24,3 @@ function sendRequest(url, method, data, callback) {
 	  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xhr.send(data);  
 }
-
-function load(){
-	draw();
-}
-
-/*
-function addsentence(turn) {
-  var newsection = document.createElement('section');
-  var sectionIdName = turn;
-  var sectionIdName = "sentence";
-  newsection.setAttribute('id',sectionIdName);
-  newdiv.setAttribute('class',sectionClass);
-}*/

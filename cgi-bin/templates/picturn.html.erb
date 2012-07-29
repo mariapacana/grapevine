@@ -10,6 +10,8 @@
 </head>
 	
 <body>
+		<script type="text/javascript" src="../util.js"></script>
+		<script type="text/javascript" src="../draw.js"></script>
 		<header class="header">  
       <h1>Grapevine</h1>
     </header>
@@ -18,12 +20,12 @@
 			<h1>1. Your friend drew you this picture.</h1>
 			<img src="<%= picdata %>">
 			<br>
-			<h1>2. What does the picture say?</h1>
-			<div id="form">Write a sentence:
-					<input type="text" id="email">
-					<button>Submit</button>
+			<h1>2. Describe what you see!</h1>
+			<div id = "status" width = "750" height = "10"></div>
+			<div id="form">Your description here:
+					<input type="text" id="sentence">
+					<button onclick="submitsentence(<%= gameid %>, <%= turn %>)">Submit</button>
 			</div>
-			<span id="status" width="750" height="10"></span> 
 		</section>
 		
 

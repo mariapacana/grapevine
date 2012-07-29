@@ -10,9 +10,9 @@
 </head>
 	
 <body>
-		<script type="text/javascript" src="game.js"></script>
+		<script type="text/javascript" src="util.js"></script>
 		<script type="text/javascript" src="draw.js"></script>
-		<body onload="load()">
+		<body onload="draw()">
 
 		<header class="header">  
       <h1>Grapevine</h1>
@@ -25,13 +25,12 @@
 			<canvas id="myCanvas" width="750" height="300" class="center" style="border:1px solid #c3c3c3;"></canvas>
 		
 			<h1>2. Start a game with your friends!</h1>
+			<div id = "status" width = "750" height = "10"></div>
 			<div id = "form">Email addresses:
 					<input type="text" id="email">
 					<button onclick="submitpic()">Submit</button>
 			</div>
 			Note: Include your email address as well, and separate addresses with a comma.
-			<span id = "status" width = "750" height = "10"></span> <!--Mystifyingly shows "Your picture has been sent!"-->
-
 		</section>
 		
 
