@@ -48,24 +48,22 @@ def makenewgame(data, email)
 end
 
 def showturn(email,gameid)
-
 	#retrieves picture from database
-	db = SQLite3::Database.new("../picdata.db")
-	playerid = db.execute("select playerid from players where email = ?",email)
+	db = SQLite3::Database.new("picdata.db")
+	playerid = db.execute("select playerid from players where email = ?",email)[0][0]
 	
 	params = [gameid, playerid]
-	turn = db.execute("select turn from gamestoplayers where gameid = ? and playerid = ?", params)
+	turn = db.execute("select turn from gamestoplayers where gameid = ? and playerid = ?", params)[0][0]
 	
 	params = [gameid, turn]
-	picdata = db.execute("select data from pics where gameid = ? and turn = ?", params)
+	picdata = db.execute("select data from pics where gameid = ? and turn = ?", params)[0][0]
 	
 	#shows picture via the erb template
-	template_data = IO.read('templates/picturn.html.erb')
+	template_data = IO.read('cgi-bin/templates/picturn.html.erb')
   template = ERB.new(template_data)
   
   #need to actually show the template. : /
-  puts template.result(binding)
-  
+  $cgi.out() { template.result(binding) }
 end
 
 def main
