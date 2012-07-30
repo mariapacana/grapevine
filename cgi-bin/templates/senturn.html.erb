@@ -6,31 +6,27 @@
   <link href='http://fonts.googleapis.com/css?family=IM+Fell+DW+Pica:400,400italic|IM+Fell+French+Canon:400,400italic' rel='stylesheet' type='text/css'>
   
   <title>Grapevine</title>
-	<link href="resources/base.css" rel="stylesheet" type="text/css"/>
+	<link href="../../resources/base.css" rel="stylesheet" type="text/css"/>
 </head>
 	
 <body>
-		<script type="text/javascript" src="util.js"></script>
-		<script type="text/javascript" src="draw.js"></script>
+		<script type="text/javascript" src="../util.js"></script>
+		<script type="text/javascript" src="../draw.js"></script>
 		<body onload="draw()">
-
 		<header class="header">  
       <h1>Grapevine</h1>
     </header>
 
-		<!--If this is the first time, show a blank picture. If someone followed a link in an email, show their turn.-->
-
-		<section class = "picture" id = "picture1">   
-			<h1>1. Draw a picture.</h1>
+		<section>   
+			<h1>1. Your friend wrote you this sentence.</h1>
+			<br>
+			<%= sentence %>
+			<br>
+			<h1>2. Draw that!</h1>
 			<canvas id="myCanvas" width="750" height="300" class="center" style="border:1px solid #c3c3c3;"></canvas>
-		
-			<h1>2. Start a game with your friends!</h1>
+			<br>
 			<div id = "status" width = "750" height = "10"></div>
-			<div id = "form">Email addresses:
-					<input type="text" id="email">
-					<button onclick="submitfirstpic()">Submit</button>
-			</div>
-			Note: Include your email address as well, and separate addresses with a comma.
+			<button onclick="submitpic(<%= gameid %>, <%= turn %>)">Submit</button>
 		</section>
 		
 

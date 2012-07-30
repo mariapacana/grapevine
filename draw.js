@@ -46,7 +46,7 @@ function mousemove(e) {
 //- Say that it's been submitted.
 //- Save the pic and userid to the database.
 //- (For the next user) display a textbox to type in.
-function submitpic(e) {
+function submitfirstpic(e) {
   
   var img = can.toDataURL("image/png");
   
@@ -63,4 +63,13 @@ function submitsentence(gameid, turn) {
    	});
 }
 
+function submitpic(gameid, turn) {
+  
+  var img = can.toDataURL("image/png");
+  
+  sendRequest("/cgi-bin/xhrtest.rb", "POST", "cmd=pic&data=" + encodeURIComponent(img)+"&gameid="+gameid+"&turn="+turn,
+   	function(response) {
+   		 $("status").innerText = "Picture sent!";
+   	});
+}
 
