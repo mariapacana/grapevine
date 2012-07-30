@@ -45,13 +45,14 @@ def new(data, email)
 		token = rand(10000)
 		params = [gameid, playerid, turn, token]
 		db.execute("insert into gamestoplayers (gameid, playerid, turn, token) values (?,?,?,?)", params) 
+		turn = turn + 1
 	end
 end
 
 def show(gameid,turn)
 	db = SQLite3::Database.new("picdata.db")
 	
-	maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]
+	maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]+1
 	
 	#shows pics
 	if (turn.odd?) && (turn < maxturns)
@@ -93,22 +94,28 @@ def main
 	
 	if (cmd == "new") #Creates a new game
 		data = URI.unescape($params["data"][0]).to_s #changes &&s for instance
-		email = $params["email"][0].split(",")
+		
+		if ($params["email"][0] == "") 
+			error("Type a valid email address.")
+		else
+			email = $params["email"][0].split(",")
+		end
+		
 		for i in email do i.strip! end
 		new(data, email)	
 	elsif (cmd == "show") #Shows the current turn
-		gameid = URI.unescape($params["gameid"][0])
-		turn = URI.unescape($params["turn"][0]).to_i
-		show(gameid, turn) #include token later
+		gameid = $params["gameid"][0]
+		turn = $params["turn"][0].to_i
+		show(gameid, turn) #INCLUDE TOKENS LATER
 	elsif (cmd == "sentence") #Updates database with a sentence
 		sentence = URI.unescape($params["sentence"][0]).to_s
-		gameid = URI.unescape($params["gameid"][0])
-		turn = URI.unescape($params["turn"][0]).to_i+1
+		gameid = $params["gameid"][0]
+		turn = $params["turn"][0].to_i+1
 		savesentence(sentence,gameid,turn)
 	elsif (cmd == "pic") #Updates database with a picture
 		data = URI.unescape($params["data"][0]).to_s
-		gameid = URI.unescape($params["gameid"][0])
-		turn = URI.unescape($params["turn"][0]).to_i+1
+		gameid = $params["gameid"][0]
+		turn = $params["turn"][0].to_i+1
 		savepic(data,gameid,turn)
 	end
 end

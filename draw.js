@@ -6,7 +6,7 @@ var canDraw = false;
 var started = false;
 
 function draw() {
-	can = $("myCanvas"); //This should be changed, depending.
+	can = $("myCanvas"); 
 	form = $("form");
 	picture = document.getElementsByClassName("picture");
 	status = $("status");
@@ -14,16 +14,16 @@ function draw() {
 	ctx = can.getContext("2d");
 	can.addEventListener("mousedown", mousedown, false);
 	can.addEventListener("mouseup", mouseup, false);
-}
+};
 
 function mousedown(e) {
 	canDraw = true;
 	can.addEventListener("mousemove", mousemove, false);
-}
+};
 
 function mouseup(e) {
 	canDraw = false;
-}
+};
 
 function mousemove(e) {
 	if (!e) var e = event;
@@ -40,36 +40,56 @@ function mousemove(e) {
   canDraw = false;
   started = false;
   }
-}
+};
 
-//When a pic is submitted, it will do the following:
-//- Say that it's been submitted.
-//- Save the pic and userid to the database.
-//- (For the next user) display a textbox to type in.
+
+function getparams() {
+	var url = window.location.search.substring(1).split("&");
+	var params = {};
+	
+	for (var i = 0; i < url.length; i++) {
+		var parts = url[i].split("="); 
+		params[parts[0]]=parts[1];
+	}
+	
+	return params;
+	
+};
+
 function submitfirstpic(e) {
-  
   var img = can.toDataURL("image/png");
+  var email = $("email").value.trim();
+  if (email.length == 0) {
+    $("status").innerText = "Please enter valid email addresses.";
+    return;
+  }
   
   sendRequest("/cgi-bin/xhrtest.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&email="+$("email").value,
    	function(response) {
    		 $("status").innerText = "Game started!";
    	});
-}
+};
 
-function submitsentence(gameid, turn) {
-  sendRequest("/cgi-bin/xhrtest.rb", "POST", "cmd=sentence&sentence="+$("sentence").value+"&gameid="+gameid+"&turn="+turn,
+function submitsentence() {
+	var params = getparams();
+	var url = "cmd=sentence&sentence="+$("sentence").value+"&gameid="+params.gameid+"&turn="+params.turn;
+	
+  sendRequest(
+  	"/cgi-bin/xhrtest.rb", "POST", url,
   	function(response) {
-  	  		 $("status").innerText = "Sentence sent!";
+  	  $("status").innerText = "Sentence sent!";
    	});
-}
+};
 
-function submitpic(gameid, turn) {
-  
+function submitpic() {
   var img = can.toDataURL("image/png");
+  var params = getparams();
+  var url = "cmd=pic&data=" + encodeURIComponent(img) + "&gameid=" + params.gameid + "&turn=" + params.turn;
   
-  sendRequest("/cgi-bin/xhrtest.rb", "POST", "cmd=pic&data=" + encodeURIComponent(img)+"&gameid="+gameid+"&turn="+turn,
+  sendRequest(
+  	"/cgi-bin/xhrtest.rb", "POST", url,
    	function(response) {
    		 $("status").innerText = "Picture sent!";
    	});
-}
+};
 
