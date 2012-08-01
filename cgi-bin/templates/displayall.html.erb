@@ -17,17 +17,18 @@
     </header>
 
 		<section>   
-			<h1>1. Your friend drew you this picture.</h1>
-			<img src="<%= picdata %>">
-			<br>
-			<h1>2. Describe what you see!</h1>
-			<div id = "status" width = "750" height = "10"></div>
-			<div id="form">Your description here:
-					<input type="text" id="sentence">
-					<button onclick="submitsentence()">Submit</button>
+			<% for i in 0..allturns.size-1 %>
+			<div>
+			<h2><%= i+1 %>.</h2>
+				<% if i.even? then %>
+					<img src="<%= allturns[i] %>">
+				<% else %>
+					<h2><%= allturns[i] %></h2>
+				<% end %>
 			</div>
+			<% end %>
+			<br>
 		</section>
-		
 
 </body>
 </html>

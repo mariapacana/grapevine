@@ -65,11 +65,27 @@ def show(gameid,turn)
 		template_data = IO.read('cgi-bin/templates/senturn.html.erb')
   	template = ERB.new(template_data)
   else
-  	error("You need to write a function that shows all of the previous turns!")
   #show all previous ones
+  	allturns = []
+  	picture = db.execute("select data from pics where gameid = ?", gameid)
+  	sentence = db.execute("select sentence from sentences where gameid = ?", gameid)
+  	
+  	if maxturns.even? then
+  		for i in 0..picture.size-1
+  			allturns << picture[i][0]
+  			allturns << sentence[i][0]
+  		end
+  	else
+  		for i in 0..picture.size-2
+  			allturns << picture[i][0]
+  			allturns << sentence[i][0]
+  		end
+  		allturns << picture[picture.size-1][0]
+  	end
+  	template_data = IO.read('cgi-bin/templates/displayall.html.erb')
+  	template = ERB.new(template_data)
   end
-  
-  #need to actually show the template. : /
+
   $cgi.out() { template.result(binding) }
   
 end
