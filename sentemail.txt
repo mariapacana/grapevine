@@ -1,3 +1,0 @@
-Hi there!
-
-Click the link here to see the entire game: http://localhost:8000/cgi-bin/xhrtest.rb?cmd=show&gameid=15&turn=2

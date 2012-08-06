@@ -105,6 +105,10 @@ def send_email(gameid,turn)
   # load appropriate template and fill in blanks
   # there will be 3 types of template (pic, sentence, final) & text & html versions.
   if (turn == maxturns) #this does not seem to work!
+    player_emails = []
+  	player_ids = db.execute("select playerid from gamestoplayers where gameid = ?", gameid)[0]
+  	player_ids.each {|i| player_emails << db.execute("select email from players where playerid = ?",i[0])[0][0] }
+
   	template_data = IO.read('cgi-bin/templates/displayallemail.txt.erb')
   	template = ERB.new(template_data)
   	email_message = template.result(binding)
