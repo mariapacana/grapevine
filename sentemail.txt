@@ -1,0 +1,3 @@
+Hi there! Your friend maria sent you a picture through Grapevine, the game where you have fun with words and sketches.
+
+Click the link here to play: http://localhost:8000/cgi-bin/xhrtest.rb?cmd=show&gameid=5&turn=1
