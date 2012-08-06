@@ -58,8 +58,7 @@ end
 
 def show(gameid,turn)
 	db = SQLite3::Database.new("picdata.db")
-	
-	maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]+1
+	maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]
 	
 	#shows pics
 	if turn.odd? && turn < maxturns
@@ -99,24 +98,30 @@ end
 
 def send_email(gameid,turn)
 	db = SQLite3::Database.new("picdata.db")
-	maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]+1
+	maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]
 	email_message = ''
 	
   # look up game and turn to find next player and turn type
   # load appropriate template and fill in blanks
   # there will be 3 types of template (pic, sentence, final) & text & html versions.
-  if turn.odd? && turn < maxturns
-		currentplayerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
-		nextplayerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid,turn+1])[0][0]
-		
-		currentplayere = db.execute("select email from players where playerid = ?", currentplayerid)[0][0]
-		nextplayere = db.execute("select email from players where playerid = ?", nextplayerid)[0][0]
-
-		template_data = IO.read('cgi-bin/templates/picturnemail.txt.erb')
+  if (turn == maxturns) #this does not seem to work!
+  	template_data = IO.read('cgi-bin/templates/displayallemail.txt.erb')
   	template = ERB.new(template_data)
   	email_message = template.result(binding)
-  elsif turn.even? && turn < maxturns
   else
+		currentplayer_id = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
+		nextplayer_id = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid,turn+1])[0][0]
+		currentplayer_e = db.execute("select email from players where playerid = ?", currentplayer_id)[0][0]
+		nextplayer_e = db.execute("select email from players where playerid = ?", nextplayer_id)[0][0]
+
+		if turn.odd?
+			template_data = IO.read('cgi-bin/templates/picturnemail.txt.erb')
+    else
+    	template_data = IO.read('cgi-bin/templates/senturnemail.txt.erb')
+    end
+    
+    template = ERB.new(template_data)
+  	email_message = template.result(binding)
   end
   
   File.open('sentemail.txt', 'w') do |file|
