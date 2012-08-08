@@ -64,7 +64,7 @@ function submitfirstpic(e) {
     return;
   }
   
-  sendRequest("/cgi-bin/xhrtest.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&email="+$("email").value,
+  sendRequest("/cgi-bin/game.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&email="+$("email").value,
    	function(response) {
    		 $("status").innerText = "Game started!";
    	});
@@ -75,7 +75,7 @@ function submitsentence() {
 	var url = "cmd=sentence&sentence="+$("sentence").value+"&gameid="+params.gameid+"&turn="+params.turn;
 	
   sendRequest(
-  	"/cgi-bin/xhrtest.rb", "POST", url,
+  	"/cgi-bin/game.rb", "POST", url,
   	function(response) {
   	  $("status").innerText = "Sentence sent!";
    	});
@@ -87,7 +87,7 @@ function submitpic() {
   var url = "cmd=pic&data=" + encodeURIComponent(img) + "&gameid=" + params.gameid + "&turn=" + params.turn;
   
   sendRequest(
-  	"/cgi-bin/xhrtest.rb", "POST", url,
+  	"/cgi-bin/game.rb", "POST", url,
    	function(response) {
    		 $("status").innerText = "Picture sent!";
    	});
