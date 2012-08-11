@@ -1,3 +1,6 @@
+//This borrows liberally from various Canvas tutorial sites 
+//including http://dev.opera.com/articles/view/html5-canvas-painting/
+//and others I can't remember!
 var can;
 var ctx;
 var canX;
@@ -59,10 +62,19 @@ function getparams() {
 function submitfirstpic(e) {
   var img = can.toDataURL("image/png");
   var email = $("email").value.trim();
-  if (email.length == 0) {
-    $("status").innerText = "Please enter valid email addresses.";
-    return;
+  
+  if (email.match(/,/)) {
+   	email = email.split(/,/);
+  } else {
+  	email = email.split(/ /);
   }
+	
+	for (var i = 0; i < email.length; i++) {
+		if (!email[i].match(/.*@.*\..*/) || email[i].length == 0) {
+		$("status").innerText = "Please enter valid email addresses.";
+    return;
+    }
+	}	
   
   sendRequest("/cgi-bin/game.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&email="+$("email").value,
    	function(response) {

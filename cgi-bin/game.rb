@@ -159,7 +159,11 @@ def main
 		if ($params["email"][0] == "") 
 			error("Type a valid email address.")
 		else
-			email = $params["email"][0].split(",")
+			if ($params["email"][0].include? ",") 
+				email = $params["email"][0].split(",")
+			else
+				email = $params["email"][0].split(" ")
+			end
 		end
 		
 		email.each {|i| i.strip! }

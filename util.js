@@ -1,7 +1,3 @@
-//This borrows liberally from various Canvas tutorial sites 
-//including http://dev.opera.com/articles/view/html5-canvas-painting/
-//and others I can't remember!
-
 function $(id) {
 	return document.getElementById(id);
 }
