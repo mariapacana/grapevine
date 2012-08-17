@@ -56,41 +56,59 @@ def new(data, email)
 	gameid
 end
 
-def show(gameid,turn)
+def displayall(gameid,turn,token)
 	db = SQLite3::Database.new("picdata.db")
 	maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]
+	correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,1])[0][0]
 	
-	#shows pics
-	if turn.odd? && turn < maxturns
-		picdata = db.execute("select data from pics where gameid = ? and turn = ?", [gameid,turn])[0][0]
-		template_data = IO.read('cgi-bin/templates/picturn.html.erb')
-  	template = ERB.new(template_data)
-  elsif turn.even? && turn < maxturns
-  #shows sentences
-		sentence = db.execute("select sentence from sentences where gameid = ? and turn = ?", [gameid,turn])[0][0]
-		template_data = IO.read('cgi-bin/templates/senturn.html.erb')
-  	template = ERB.new(template_data)
-  else
-  #show all previous ones
-  	allturns = []
-  	picture = db.execute("select data from pics where gameid = ?", gameid)
-  	sentence = db.execute("select sentence from sentences where gameid = ?", gameid)
-  	
-  	if maxturns.even? then
-  		for i in 0..picture.size-1
-  			allturns << picture[i][0]
-  			allturns << sentence[i][0]
-  		end
-  	else
-  		for i in 0..picture.size-2
-  			allturns << picture[i][0]
-  			allturns << sentence[i][0]
-  		end
-  		allturns << picture[picture.size-1][0]
-  	end
-  	template_data = IO.read('cgi-bin/templates/displayall.html.erb')
-  	template = ERB.new(template_data)
-  end
+	if (turn == maxturns) 
+		allturns = []
+		picture = db.execute("select data from pics where gameid = ?", gameid)
+		sentence = db.execute("select sentence from sentences where gameid = ?", gameid)
+			
+		if maxturns.even? then
+			for i in 0..picture.size-1
+				allturns << picture[i][0]
+				allturns << sentence[i][0]
+			end
+		else
+			for i in 0..picture.size-2
+				allturns << picture[i][0]
+				allturns << sentence[i][0]
+			end
+			allturns << picture[picture.size-1][0]
+		end
+		template_data = IO.read('cgi-bin/templates/displayall.html.erb')
+		template = ERB.new(template_data)
+	else
+		template_data = IO.read('cgi-bin/templates/wrongtoken.html.erb')
+		template = ERB.new(template_data)
+	end
+
+  $cgi.out() { template.result(binding) }
+end
+
+def show(gameid,turn,token)
+	db = SQLite3::Database.new("picdata.db")
+	#maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]
+	correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
+	
+	if (token == correct_token)
+		#shows pics
+		if turn.odd? #& turn < maxturns
+			picdata = db.execute("select data from pics where gameid = ? and turn = ?", [gameid,turn])[0][0]
+			template_data = IO.read('cgi-bin/templates/picturn.html.erb')
+			template = ERB.new(template_data)
+		#shows sentences
+		else 
+			sentence = db.execute("select sentence from sentences where gameid = ? and turn = ?", [gameid,turn])[0][0]
+			template_data = IO.read('cgi-bin/templates/senturn.html.erb')
+			template = ERB.new(template_data)
+		end
+	else
+		template_data = IO.read('cgi-bin/templates/wrongtoken.html.erb')
+		template = ERB.new(template_data)
+	end
 
   $cgi.out() { template.result(binding) }
   
@@ -104,10 +122,11 @@ def send_email(gameid,turn)
   # look up game and turn to find next player and turn type
   # load appropriate template and fill in blanks
   # there will be 3 types of template (pic, sentence, final) & text & html versions.
-  if (turn == maxturns) #this does not seem to work!
+  if (turn == maxturns) 
     player_emails = []
-  	player_ids = db.execute("select playerid from gamestoplayers where gameid = ?", gameid)[0]
+  	player_ids = db.execute("select playerid from gamestoplayers where gameid = ?", gameid)
   	player_ids.each {|i| player_emails << db.execute("select email from players where playerid = ?",i[0])[0][0] }
+  	token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,1])[0][0]
 
   	template_data = IO.read('cgi-bin/templates/displayallemail.txt.erb')
   	template = ERB.new(template_data)
@@ -117,6 +136,7 @@ def send_email(gameid,turn)
 		nextplayer_id = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid,turn+1])[0][0]
 		currentplayer_e = db.execute("select email from players where playerid = ?", currentplayer_id)[0][0]
 		nextplayer_e = db.execute("select email from players where playerid = ?", nextplayer_id)[0][0]
+		token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
 
 		if turn.odd?
 			template_data = IO.read('cgi-bin/templates/picturnemail.txt.erb')
@@ -169,22 +189,28 @@ def main
 		email.each {|i| i.strip! }
 		gameid = new(data, email)	
 		send_email(gameid, 1)
-	elsif (cmd == "show") # Shows the current turn
+	elsif (cmd == "show") # Shows the current turn, but only to someone who has the token!
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i
-		show(gameid, turn) #INCLUDE TOKENS LATER
+		token = $params["token"][0].to_i
+		show(gameid,turn,token) 
+	elsif (cmd == "displayall") # Shows all turns
+		gameid = $params["gameid"][0]
+		turn = $params["turn"][0].to_i
+		token = $params["token"][0].to_i
+		displayall(gameid, turn, token) 
 	elsif (cmd == "sentence") # Updates database with a sentence
 		sentence = URI.unescape($params["sentence"][0]).to_s
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i+1
 		savesentence(sentence,gameid,turn)
-		send_email(gameid, turn)
+		send_email(gameid,turn)
 	elsif (cmd == "pic") # Updates database with a picture
 		data = URI.unescape($params["data"][0]).to_s
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i+1
 		savepic(data,gameid,turn)
-		send_email(gameid, turn)
+		send_email(gameid,turn)
 	end
 end
 

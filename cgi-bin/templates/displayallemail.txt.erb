@@ -1,3 +1,3 @@
-Hi there! Your friends <% for i in player_emails %><%= i %><% end %> generated the Grapevine game below.
+Hi there! The players <% i=0 %><% while i < player_emails.length-1 %><%= player_emails[i] %>, <% i+=1 %><% end %>and <%= player_emails[player_emails.length - 1] %> generated the Grapevine game below.
 
-Click the link here to see the entire game: http://localhost:8000/cgi-bin/xhrtest.rb?cmd=show&gameid=<%= gameid %>&turn=<%= turn %>
+Click the link here to see the entire game: http://localhost:8000/cgi-bin/game.rb?cmd=displayall&gameid=<%= gameid %>&turn=<%= turn %>&token=<%= token %>
