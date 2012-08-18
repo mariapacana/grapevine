@@ -77,12 +77,22 @@ font-family: 'IM Fell DW Pica', serif;
 font-size: 100%;
 }
 
-button {
+button#clear {
+width:100px;
+margin-left: auto;
+margin-right: auto;
+font-family: 'IM Fell DW Pica', serif;
+font-size: 100%;
+}
+
+button#submit {
 width:100px;
 margin-left: .5em;
 font-family: 'IM Fell DW Pica', serif;
 font-size: 100%;
 }
+
+
 
 
 

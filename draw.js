@@ -45,6 +45,10 @@ function mousemove(e) {
   }
 };
 
+function eraseall() {
+	ctx.clearRect(0,0,can.width,can.height);
+	console.log('mew');
+};
 
 function getparams() {
 	var url = window.location.search.substring(1).split("&");
