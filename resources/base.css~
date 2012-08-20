@@ -86,7 +86,7 @@ font-size: 100%;
 button#submit {
 font-family: 'Helvetica', sans-serif;
 margin-left: 4px;
-font-size: 100%;
+font-size: 80%;
 }
 
 

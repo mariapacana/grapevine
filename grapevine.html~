@@ -27,8 +27,6 @@
 			<div id = "form">Email addresses:
 					<input type="text" id="email">
 					<button id="submit" onclick="submitfirstpic()">Submit</button>
-			<br>
-			Note: Include your email address first and separate addresses with a comma or space.
 			</div>
 		</section>
 		
