@@ -5,18 +5,24 @@ var can;
 var ctx;
 var canX;
 var canY;
+var canStyle = "#000000";
 var canDraw = false;
 var started = false;
+var eraseButton;
 
 function draw() {
 	can = $("myCanvas"); 
 	form = $("form");
 	picture = document.getElementsByClassName("picture");
 	status = $("status");
+	eraseButton = $("eraseButton");
     
 	ctx = can.getContext("2d");
 	can.addEventListener("mousedown", mousedown, false);
 	can.addEventListener("mouseup", mouseup, false);
+	
+	//Tries to prevent I-beam
+	can.addEventListener("selectstart", function() { return false; }, false);
 };
 
 function mousedown(e) {
@@ -25,6 +31,9 @@ function mousedown(e) {
 	canX = e.pageX - can.offsetLeft;
   canY = e.pageY - can.offsetTop;
 	ctx.fillRect(canX,canY,1,1);
+	
+	//Tries to prevent I-beam
+	return false;
 };
 
 function mouseup(e) {
@@ -35,6 +44,7 @@ function mousemove(e) {
 	if (!e) var e = event;
 		canX = e.pageX - can.offsetLeft;
     canY = e.pageY - can.offsetTop;
+    ctx.strokeStyle = canStyle;
   if (canDraw && !started) {
     ctx.beginPath();
     ctx.moveTo(canX, canY);
@@ -51,6 +61,16 @@ function mousemove(e) {
 function eraseall() {
 	ctx.clearRect(0,0,can.width,can.height);
 	console.log('mew');
+};
+
+function erase() {
+	if (canStyle == "#000000") {
+		canStyle = "#FFFFFF";
+		eraseButton.innerText = "Draw";
+	} else {
+		canStyle = "#000000";
+		eraseButton.innerText = "Erase";
+	}
 };
 
 function getparams() {

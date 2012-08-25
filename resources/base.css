@@ -1,6 +1,7 @@
 body {
   margin: 0 auto;
 	font-family: 'Galdeano', sans-serif;
+	font-size: 150%;
   min-width: 800px; /*won't let page get narrower than this*/
 }
 
@@ -32,6 +33,8 @@ display: block;
 margin-left: auto;   
 margin-right: auto; 
 margin-top: 12px;
+cursor: crosshair;
+-webkit-user-select: none;
 }
 
 section {
@@ -45,7 +48,7 @@ margin-right: auto;
 }
 
 section h1 {  /*spaces mean children (not nec. direct)*/
-font-size: 150%;
+font-size: 120%;
 display: inline;
 }
 
@@ -62,31 +65,40 @@ margin-right: auto;
 
 #form { /*hash matches id*/
 width: 900px;
+height: 10px;
+
 margin-left: 37px;
 margin-right: auto;
 margin-top: 12px;
-font-size: 120%;
+}
+
+#status {
+margin-left: 37px;
+font-family: 'Helvetica', sans-serif;
+font-size: 80%;
+color: blue;
+margin-top: 12px;
 }
 
 input[type=text] {
 font-family: 'Helvetica', sans-serif;
+font-size: 70%;
 width:400px;
-font-size: 100%;
 }
 
-button#eraseall {
+button {
 font-family: 'Helvetica', sans-serif;
+font-size: 70%;
 margin-left: 37px;
-margin-right: auto;
+margin-right: 3px;
 margin-top: 10px;
 margin-bottom: 15px;
-font-size: 100%;
 }
 
 button#submit {
 font-family: 'Helvetica', sans-serif;
+font-size: 70%;
 margin-left: 4px;
-font-size: 100%;
 }
 
 
