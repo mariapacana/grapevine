@@ -18,12 +18,17 @@
     </header>
     
 		<section class = "picture" id = "picture1">   
+			<div id="howto" width = "825" height = "10" onclick="hide()">
+			Grapevine is a drawing game that you can play with your friends! Draw a picture and describe it. We'll send it to your friends, who will take turns drawing and writing. 
+			<I>Click anywhere in this box to hide it.</I>
+			</div>
 			<h1>1. Draw a picture.</h1>
 			<canvas id="myCanvas" width="825" height="550" class="center" style="border:1px solid #c3c3c3;"></canvas>
 			<button id="eraseall" onclick="eraseall()">Clear</button>
 			<button id="eraseButton" onclick="erase()">Erase</button>
 			<br>
-			<h1>2. Start a game with your friends!</h1>
+			<h1>2. Describe your drawing.</h1>
+			<h1>3. Start a game with your friends!</h1>
 			<div id = "status" width = "825" height = "10"></div>
 			<div id = "form">Email addresses:
 					<input type="text" id="email">

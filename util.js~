@@ -22,5 +22,5 @@ function sendRequest(url, method, data, callback) {
 }
 
 function hide() {
-	$("howto").style.display = "none";
+	$("howto").style.display = none;
 }

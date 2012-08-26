@@ -1,19 +1,19 @@
 body {
   margin: 0 auto;
 	font-family: 'Galdeano', sans-serif;
-	font-size: 150%;
+	font-size: 100%;
   min-width: 800px; /*won't let page get narrower than this*/
 }
 
 .header {	
 font-family: 'Dancing Script', cursive, bold;
-font-size: 500%;
+font-size: 300%;
 display: block;
 margin-top: 0px;
 margin-left: auto;   
 margin-right: auto; 
-padding-top: 30px;
-padding-bottom: 30px;
+padding-top: 10px;
+padding-bottom: 10px;
 border-bottom: solid;
 border-color: #e04b00;
 border-width: 3px;
@@ -34,7 +34,7 @@ margin-left: auto;
 margin-right: auto; 
 margin-top: 12px;
 cursor: crosshair;
-user-select: none;
+-webkit-user-select: none;
 }
 
 section {
@@ -49,7 +49,16 @@ margin-right: auto;
 
 section h1 {  /*spaces mean children (not nec. direct)*/
 font-size: 120%;
+margin-top: 12px;
 display: inline;
+}
+
+#howto {
+text-align: justify;
+background-color: #DCDCDC;
+padding: 10px;
+border-radius: 15px;
+margin-bottom: 20px;
 }
 
 .sentence {  /*period means class*/
@@ -89,12 +98,14 @@ width:400px;
 button {
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;
-margin-left: 37px;
 margin-right: 3px;
 margin-top: 10px;
 margin-bottom: 15px;
 }
 
+button#eraseall {
+margin-left: 37px;
+}
 button#submit {
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;

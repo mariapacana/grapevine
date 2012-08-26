@@ -6,6 +6,7 @@ var ctx;
 var canX;
 var canY;
 var canStyle = "#000000";
+var canWidth = 2;
 var canDraw = false;
 var started = false;
 var eraseButton;
@@ -45,6 +46,7 @@ function mousemove(e) {
 		canX = e.pageX - can.offsetLeft;
     canY = e.pageY - can.offsetTop;
     ctx.strokeStyle = canStyle;
+    ctx.lineWidth = canWidth;
   if (canDraw && !started) {
     ctx.beginPath();
     ctx.moveTo(canX, canY);
@@ -66,9 +68,11 @@ function eraseall() {
 function erase() {
 	if (canStyle == "#000000") {
 		canStyle = "#FFFFFF";
+		canWidth = 10;
 		eraseButton.innerText = "Draw";
 	} else {
 		canStyle = "#000000";
+		canWidth = 2;
 		eraseButton.innerText = "Erase";
 	}
 };
