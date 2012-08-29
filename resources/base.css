@@ -61,6 +61,17 @@ border-radius: 15px;
 margin-bottom: 20px;
 }
 
+#close {
+float: right;
+padding-left: 10px;
+}
+
+#close:hover {
+opacity: 0.5;
+filter: alpha(opacity=50);
+}
+
+
 .sentence {  /*period means class*/
 background-color: white;
 display: block;
