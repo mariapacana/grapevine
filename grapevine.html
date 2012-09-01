@@ -18,13 +18,13 @@
     
 		<section class = "picture" id = "picture1">   
 			<div id="howto" width = "825" height = "10">
-			<img id="close" onclick="hide()" src="/images/close.png">
+			<img id="close" src="/images/close.png">
 			Grapevine is a drawing game that you can play with your friends! Draw a picture and describe it. We'll send it to your friends, who will take turns drawing and writing. 
 			</div>
 			<h1>1. Draw a picture.</h1>
-			<canvas id="myCanvas" width="825" height="550" class="center" style="border:1px solid #c3c3c3;" onmouseover = "draw()"></canvas>
-			<button id="eraseall" onclick="eraseall()">Clear</button>
-			<button id="eraseButton" onclick="toggleErase()">Erase</button>
+			<canvas id="myCanvas" width="825" height="550" class="center" style="border:1px solid #c3c3c3;"></canvas>
+			<button id="eraseAllButton">Clear</button>
+			<button id="eraseButton">Erase</button>
 			<br>
 			<h1>2. Describe your drawing.</h1>
 			<br>
@@ -32,7 +32,7 @@
 			<div id = "status" width = "825" height = "10"></div>
 			<div id = "form">Email addresses:
 					<input type="text" id="email">
-					<button id="submit" onclick="submitfirstpic()">Submit</button>
+					<button id="submitButton">Submit</button>
 			<br>
 			Note: Include your email address first and separate addresses with a comma or space.
 			</div>

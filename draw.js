@@ -1,6 +1,9 @@
 //This borrows liberally from various Canvas tutorial sites 
 //including http://dev.opera.com/articles/view/html5-canvas-painting/
 //and others I can't remember!
+
+//var g = {};
+
 var can;
 var ctx;
 var canX;
@@ -9,28 +12,37 @@ var canStyle = "#000000";
 var canWidth = 2;
 var canDraw = false;
 var erasing = false;
+var close;
+var eraseAllButton;
 var eraseButton;
+var submitButton;
 var started = false;
 
 function onload() {
+  //g.can = $("myCanvas");
+	can = $("myCanvas"); 
+	form = $("form");
+	eraseAllButton = $("eraseAllButton");
+	eraseButton = $("eraseButton");
+	submitButton = $("submitButton");
+	close = $("close");
+	picture = document.getElementsByClassName("picture");
+	status = $("status");
+	ctx = can.getContext("2d");
 	
+	can.addEventListener("mouseover", draw,false);
+	close.addEventListener("click", hide, false);
+	eraseAllButton.addEventListener("click", eraseAll, false);
+	eraseButton.addEventListener("click", toggleErase, false);
+	submitButton.addEventListener("click", submitFirstTurn, false);
 };
 
 function draw(e) {
-	can = $("myCanvas"); 
-	form = $("form");
-	picture = document.getElementsByClassName("picture");
-	status = $("status");
-	eraseButton = $("eraseButton");
-	ctx = can.getContext("2d");
-	
 	setUpCanvas(can);
-	
 	can.addEventListener("mousedown", mousedown, false);
 	can.addEventListener("mouseup", mouseup, false);
 	
 	//Tries to prevent I-beam
-	if (!e) var e = window.event;
 	e.preventDefault();	
 };
 
@@ -81,9 +93,8 @@ function mousemove(e) {
   }
 };
 
-function eraseall() {
+function eraseAll() {
 	ctx.clearRect(0,0,can.width,can.height);
-	console.log('mew');
 };
 
 function toggleErase() {
@@ -112,7 +123,7 @@ function getparams() {
 	
 };
 
-function submitfirstpic(e) {
+function submitFirstTurn(e) {
   var img = can.toDataURL("image/png");
   var email = $("email").value.trim();
   

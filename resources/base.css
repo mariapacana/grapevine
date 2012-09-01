@@ -113,10 +113,10 @@ margin-top: 10px;
 margin-bottom: 15px;
 }
 
-button#eraseall {
+button#eraseAllButton {
 margin-left: 37px;
 }
-button#submit {
+button#submitButton {
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;
 margin-left: 4px;
