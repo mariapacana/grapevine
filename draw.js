@@ -8,33 +8,54 @@ var canY;
 var canStyle = "#000000";
 var canWidth = 2;
 var canDraw = false;
-var started = false;
+var erasing = false;
 var eraseButton;
+var started = false;
 
-function draw() {
+function onload() {
+	
+};
+
+function draw(e) {
 	can = $("myCanvas"); 
 	form = $("form");
 	picture = document.getElementsByClassName("picture");
 	status = $("status");
 	eraseButton = $("eraseButton");
-    
 	ctx = can.getContext("2d");
+	
+	setUpCanvas(can);
+	
 	can.addEventListener("mousedown", mousedown, false);
 	can.addEventListener("mouseup", mouseup, false);
 	
 	//Tries to prevent I-beam
-	can.addEventListener("selectstart", function() { return false; }, false);
+	if (!e) var e = window.event;
+	e.preventDefault();	
+};
+
+function setUpCanvas (can) {		
+	//console.log(erasing);
+	//console.log(can.style.cursor);
+	if (!erasing) {
+		can.style.cursor = "crosshair";
+	} else {
+		can.style.cursor = "url('/images/eraser.png'), auto";
+	}
 };
 
 function mousedown(e) {
+	//Tries to prevent I-beam
+	if (!e) var e = window.event;
+	e.preventDefault();	
+		
 	canDraw = true;
 	can.addEventListener("mousemove", mousemove, false);
+  
 	canX = e.pageX - can.offsetLeft;
   canY = e.pageY - can.offsetTop;
 	ctx.fillRect(canX,canY,1,1);
-	
-	//Tries to prevent I-beam
-	return false;
+
 };
 
 function mouseup(e) {
@@ -65,10 +86,11 @@ function eraseall() {
 	console.log('mew');
 };
 
-function erase() {
+function toggleErase() {
+	erasing = !erasing;	
 	if (canStyle == "#000000") {
 		canStyle = "#FFFFFF";
-		canWidth = 10;
+		canWidth = 20;
 		eraseButton.innerText = "Draw";
 	} else {
 		canStyle = "#000000";
