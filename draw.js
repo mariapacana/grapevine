@@ -52,7 +52,7 @@ function setUpCanvas (can) {
 	if (!erasing) {
 		can.style.cursor = "crosshair";
 	} else {
-		can.style.cursor = "url('/images/eraser.png'), auto";
+		can.style.cursor = "url('/images/eraser.png') 10 10, auto";
 	}
 };
 
