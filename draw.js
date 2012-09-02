@@ -126,6 +126,7 @@ function getparams() {
 function submitFirstTurn(e) {
   var img = can.toDataURL("image/png");
   var email = $("email").value.trim();
+  var sentence = $("sentence_input").value.trim();
   
   if (email.match(/,/)) {
    	email = email.split(/,/);
@@ -140,7 +141,9 @@ function submitFirstTurn(e) {
     }
 	}	
   
-  sendRequest("/cgi-bin/game.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&email="+$("email").value,
+  //console.log("/cgi-bin/game.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&sentence=" + sentence + "&email=" +$("email").value);
+  
+  sendRequest("/cgi-bin/game.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&sentence=" + sentence + "&email=" +$("email").value,
    	function(response) {
    		 $("status").innerText = "Game started!";
    	});

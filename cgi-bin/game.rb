@@ -26,7 +26,7 @@ def error(message) #broken; sends 200 rather than 400
 	exit
 end
 
-def new(data, email)
+def new(data, email, sentence)
 	db = SQLite3::Database.new("picdata.db")
 	turn = 1
 	optedout = 0
@@ -35,6 +35,7 @@ def new(data, email)
 	gameid = db.last_insert_row_id().to_i
 
 	db.execute("insert into pics (data, gameid, turn) values (?,?,?)", [data, gameid, turn]) 
+	db.execute("insert into sentences (sentence, gameid, turn) values (?,?,?)", [sentence, gameid, turn]) 	
 	
 	for e in email do
 		playerid = nil
@@ -175,6 +176,7 @@ def main
 	
 	if (cmd == "new") # Creates a new game
 		data = URI.unescape($params["data"][0]).to_s # changes &&s for instance
+		sentence = $params["sentence"][0]
 		
 		if ($params["email"][0] == "") 
 			error("Type a valid email address.")
@@ -187,7 +189,7 @@ def main
 		end
 		
 		email.each {|i| i.strip! }
-		gameid = new(data, email)	
+		gameid = new(data, email, sentence)	
 		send_email(gameid, 1)
 	elsif (cmd == "show") # Shows the current turn, but only to someone who has the token!
 		gameid = $params["gameid"][0]
