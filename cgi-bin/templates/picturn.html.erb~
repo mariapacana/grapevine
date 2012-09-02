@@ -8,10 +8,10 @@
 	<link href="../resources/base.css" rel="stylesheet" type="text/css"/>
 </head>
 	
-<body>
-		<script type="text/javascript" src="util.js"></script>
-		<script type="text/javascript" src="draw.js"></script>
-		<body onload="draw()">
+<body onload="onloadPicture()">
+		<script type="text/javascript" src="../util.js"></script>
+		<script type="text/javascript" src="../draw.js"></script>
+		<body onload="onloadPicture">
 
 		<header class="header">  
       Grapevine
@@ -22,10 +22,9 @@
 			<img src="<%= picdata %>">
 			<br>
 			<h1>2. Describe what you see!</h1>
-			<div id = "status" width = "750" height = "10"></div>
-			<div id="form">Your description here:
-					<input type="text" id="sentence">
-					<button onclick="submitsentence()">Submit</button>
+			<input id="sentenceInput" type="text">
+			<button id="submitSentenceButton">Submit</button>
+			<div id="status" width="825" height="10"></div>
 			</div>
 		</section>
 		

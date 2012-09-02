@@ -35,6 +35,29 @@ function onload() {
 	eraseAllButton.addEventListener("click", eraseAll, false);
 	eraseButton.addEventListener("click", toggleErase, false);
 	submitButton.addEventListener("click", submitFirstTurn, false);
+	submitPicButton.addEventListener("click", submitPic, false);
+};
+
+function onloadSentence() {
+	can = $("myCanvas"); 
+	eraseAllButton = $("eraseAllButton");
+	eraseButton = $("eraseButton");
+	submitPicButton = $("submitPicButton");
+	status = $("status");
+	ctx = can.getContext("2d");
+	
+	can.addEventListener("mouseover", draw, false);
+	eraseAllButton.addEventListener("click", eraseAll, false);
+	eraseButton.addEventListener("click", toggleErase, false);
+	submitPicButton.addEventListener("click", submitPic, false);
+};
+
+function onloadPicture() {
+	submitSentenceButton = $("submitSentenceButton");
+	sentence = $("sentenceInput").value;
+	status = $("status");
+	
+	submitSentenceButton.addEventListener("click", submitSentence, false);
 };
 
 function draw(e) {
@@ -126,7 +149,7 @@ function getparams() {
 function submitFirstTurn(e) {
   var img = can.toDataURL("image/png");
   var email = $("email").value.trim();
-  var sentence = $("sentence_input").value.trim();
+  var sentence = $("sentenceInput").value.trim();
   
   if (email.match(/,/)) {
    	email = email.split(/,/);
@@ -149,9 +172,9 @@ function submitFirstTurn(e) {
    	});
 };
 
-function submitsentence() {
+function submitSentence() {
 	var params = getparams();
-	var url = "cmd=sentence&sentence="+$("sentence").value+"&gameid="+params.gameid+"&turn="+params.turn;
+	var url = "cmd=sentence&sentence="+$("sentenceInput").value+"&gameid="+params.gameid+"&turn="+params.turn;
 	
   sendRequest(
   	"/cgi-bin/game.rb", "POST", url,
@@ -160,7 +183,7 @@ function submitsentence() {
    	});
 };
 
-function submitpic() {
+function submitPic() {
   var img = can.toDataURL("image/png");
   var params = getparams();
   var url = "cmd=pic&data=" + encodeURIComponent(img) + "&gameid=" + params.gameid + "&turn=" + params.turn;

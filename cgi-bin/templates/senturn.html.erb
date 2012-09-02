@@ -8,9 +8,9 @@
 	<link href="../resources/base.css" rel="stylesheet" type="text/css"/>
 </head>
 		
-<body onload = "onload()">
-		<script type="text/javascript" src="util.js"></script>
-		<script type="text/javascript" src="draw.js"></script>
+<body onload="onloadSentence()">
+		<script type="text/javascript" src="../util.js"></script>
+		<script type="text/javascript" src="../draw.js"></script>
 
 		<header class="header">  
       Grapevine
@@ -22,10 +22,11 @@
 			<%= sentence %>
 			<br>
 			<h1>2. Draw that!</h1>
-			<canvas id="myCanvas" width="750" height="300" class="center" style="border:1px solid #c3c3c3;"></canvas>
-			<br>
+			<canvas id="myCanvas" width="848" height="550" class="center" style="border:1px solid #c3c3c3;"></canvas>
+			<button id="eraseAllButton">Clear</button>
+			<button id="eraseButton">Erase</button>
+			<button id="submitPicButton">Submit</button>
 			<div id = "status" width = "750" height = "10"></div>
-			<button onclick="submitpic()">Submit</button>
 		</section>
 		
 

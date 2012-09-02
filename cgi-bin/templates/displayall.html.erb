@@ -9,26 +9,23 @@
 </head>
 		
 <body>
-		<script type="text/javascript" src="util.js"></script>
-		<script type="text/javascript" src="draw.js"></script>
-		<body onload="draw()">
 
 		<header class="header">  
       Grapevine
     </header>
     
-		<section>   
-			<% for i in 0..allturns.size-1 %>
-			<div>
-			<h2><%= i+1 %>.</h2>
+		<section>   		
+			<h2>Player 1</h2>
+				<img src="<%= allturns[0] %>">
+				<div class="sentence"><%= allturns[1] %></div>	
+			<% for i in 2..allturns.size-1 %>
+			<h2>Player <%= i %></h2>
 				<% if i.even? then %>
 					<img src="<%= allturns[i] %>">
 				<% else %>
-					<h2><%= allturns[i] %></h2>
+					<div class="sentence"><%= allturns[i] %></div>
 				<% end %>
-			</div>
 			<% end %>
-			<br>
 		</section>
 
 </body>

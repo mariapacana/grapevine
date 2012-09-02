@@ -67,18 +67,8 @@ def displayall(gameid,turn,token)
 		picture = db.execute("select data from pics where gameid = ?", gameid)
 		sentence = db.execute("select sentence from sentences where gameid = ?", gameid)
 			
-		if maxturns.even? then
-			for i in 0..picture.size-1
-				allturns << picture[i][0]
-				allturns << sentence[i][0]
-			end
-		else
-			for i in 0..picture.size-2
-				allturns << picture[i][0]
-				allturns << sentence[i][0]
-			end
-			allturns << picture[picture.size-1][0]
-		end
+		allturns = [picture,sentence].transpose.flatten
+		
 		template_data = IO.read('cgi-bin/templates/displayall.html.erb')
 		template = ERB.new(template_data)
 	else
@@ -95,15 +85,15 @@ def show(gameid,turn,token)
 	correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
 	
 	if (token == correct_token)
-		#shows pics
-		if turn.odd? #& turn < maxturns
-			picdata = db.execute("select data from pics where gameid = ? and turn = ?", [gameid,turn])[0][0]
-			template_data = IO.read('cgi-bin/templates/picturn.html.erb')
-			template = ERB.new(template_data)
 		#shows sentences
-		else 
+		if turn.odd? #& turn < maxturns
 			sentence = db.execute("select sentence from sentences where gameid = ? and turn = ?", [gameid,turn])[0][0]
 			template_data = IO.read('cgi-bin/templates/senturn.html.erb')
+			template = ERB.new(template_data)
+		#shows pics
+		else 
+			picdata = db.execute("select data from pics where gameid = ? and turn = ?", [gameid,turn])[0][0]
+			template_data = IO.read('cgi-bin/templates/picturn.html.erb')
 			template = ERB.new(template_data)
 		end
 	else
@@ -140,9 +130,9 @@ def send_email(gameid,turn)
 		token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
 
 		if turn.odd?
-			template_data = IO.read('cgi-bin/templates/picturnemail.txt.erb')
+			template_data = IO.read('cgi-bin/templates/senturnemail.txt.erb')
     else
-    	template_data = IO.read('cgi-bin/templates/senturnemail.txt.erb')
+			template_data = IO.read('cgi-bin/templates/picturnemail.txt.erb')
     end
     
     template = ERB.new(template_data)

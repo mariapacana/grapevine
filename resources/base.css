@@ -36,6 +36,14 @@ margin-top: 12px;
 -webkit-user-select: none;
 }
 
+#pic {   
+display: block;   
+margin-left: 25px;   
+margin-right: auto; 
+margin-top: 12px;
+-webkit-user-select: none;
+}
+
 section {
 background-color: white;
 display: block;
@@ -70,7 +78,7 @@ opacity: 0.5;
 filter: alpha(opacity=50);
 }
 
-#sentence_input { /*hash matches id*/
+#sentenceInput { /*hash matches id*/
 display: block;
 margin-left: 25px;
 margin-top: 10px;
@@ -79,7 +87,7 @@ font-size: 70%;
 width:845px;
 }
 
-#email_form { /*hash matches id*/
+#emailForm { /*hash matches id*/
 margin-left: 25px;
 margin-right: auto;
 margin-top: 0px;
@@ -116,16 +124,29 @@ font-size: 70%;
 margin-left: 4px;
 }
 
-.sentence {  /*period means class*/
+button#submitSentenceButton {
+font-family: 'Helvetica', sans-serif;
+font-size: 70%;
+margin-left: 25px;
+}
+
+.sentence { 
+display: inline;
+margin-left: 25px;
+margin-right: auto;
+}
+
+/*.sentence { 
 background-color: white;
 display: block;
 border-width:2px;	
 font-size: 150%;
 width: 900px;
 height: 200px;
-margin-left: auto;
+margin-left: 25px;
 margin-right: auto;
-}
+}*/
+
 
 
 
