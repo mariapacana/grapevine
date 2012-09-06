@@ -28,22 +28,6 @@ font-family: 'Source Sans Pro', sans-serif;
 margin-bottom: .01px;
 }
 
-canvas.center {   
-display: block;   
-margin-left: 25px;   
-margin-right: auto; 
-margin-top: 12px;
--webkit-user-select: none;
-}
-
-#pic {   
-display: block;   
-margin-left: 25px;   
-margin-right: auto; 
-margin-top: 12px;
--webkit-user-select: none;
-}
-
 section {
 background-color: white;
 display: block;
@@ -58,6 +42,21 @@ section h1 {  /*spaces mean children (not nec. direct)*/
 font-size: 120%;
 margin-top: 20px;
 margin-bottom: 0px;
+}
+
+.picture {   
+display: block;   
+margin-left: 25px;   
+margin-right: auto; 
+margin-top: 12px;
+-webkit-user-select: none;
+border:1px solid #c3c3c3;
+}
+
+.sentence { 
+margin-left: 25px;
+margin-right: auto;
+margin-top: 12px;
 }
 
 #howto {
@@ -82,6 +81,7 @@ filter: alpha(opacity=50);
 display: block;
 margin-left: 25px;
 margin-top: 10px;
+margin-bottom: 0px;
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;
 width:845px;
@@ -129,23 +129,6 @@ font-family: 'Helvetica', sans-serif;
 font-size: 70%;
 margin-left: 25px;
 }
-
-.sentence { 
-display: inline;
-margin-left: 25px;
-margin-right: auto;
-}
-
-/*.sentence { 
-background-color: white;
-display: block;
-border-width:2px;	
-font-size: 150%;
-width: 900px;
-height: 200px;
-margin-left: 25px;
-margin-right: auto;
-}*/
 
 
 

@@ -17,25 +17,28 @@
     </header>
     
 		<section>   
-			<div id="howto" width = "825" height = "10">
-			<img id="close" src="/images/close.png">
-			Grapevine is a drawing game that you can play with your friends! Draw a picture and describe it. We'll send it to your friends, who will take turns drawing and writing. 
-			</div>
-			<h1>1. Draw a picture.</h1>
-			<canvas id="myCanvas" width="848" height="550" class="center" style="border:1px solid #c3c3c3;"></canvas>
-			<button id="eraseAllButton">Clear</button>
-			<button id="eraseButton">Erase</button>
-			<h1>2. Describe your drawing.</h1>
-			<input id="sentenceInput" type="text">
-			<h1>3. Start a game with your friends!</h1>
-			<div id = "emailForm">Email addresses: <input type="text" id="email"><button id="submitButton">Submit</button>
-			<br>
-			Note: Include your email address first and separate addresses with a comma or space.
-			</div>
-			<div id="status" width="825" height="10"></div>
-		</section>
 		
-
+			<div id="howto" width = "825" height = "10">
+				<img id="close" src="/images/close.png">
+				Grapevine is a drawing game that you can play with your friends! Draw a picture and describe it. We'll send it to your friends, who will take turns drawing and writing. 
+			</div>
+			
+			<h1>1. Draw a picture.</h1>
+				<canvas id="myCanvas" width="848" height="550" class="picture"></canvas>
+				<button id="eraseAllButton">Clear</button>
+				<button id="eraseButton">Erase</button>
+				
+			<h1>2. Describe your drawing.</h1>
+				<input id="sentenceInput" class="sentence" type="text">
+			
+			<h1>3. Start a game with your friends!</h1>
+				<div id = "emailForm">Email addresses: <input type="text" id="email"><button id="submitButton">Submit</button>
+				<br>
+				Note: Include your email address first and separate addresses with a comma or space.
+				</div>
+				<div id="status" width="825" height="10"></div>
+				
+		</section>		
 </body>
 </html>
 

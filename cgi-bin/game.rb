@@ -4,15 +4,17 @@ require "sqlite3"
 require "uri"
 require "json"
 require "erb"
+require "time"
 
 =begin
 drop table if exists games;
 drop table if exists gamestoplayers;
 drop table if exists pics;
 drop table if exists players;
+drop table if exists sentences;
 
 CREATE TABLE games (gameid integer primary key, turn integer);
-CREATE TABLE gamestoplayers (gameid integer, playerid integer, turn integer, token integer);
+CREATE TABLE gamestoplayers (gameid integer, playerid integer, turn integer, token integer, time integer);
 CREATE TABLE pics (picid integer primary key, data blob, gameid integer, turn integer);
 CREATE TABLE sentences (sentenceid integer primary key, sentence blob, gameid integer, turn integer);
 CREATE TABLE players (playerid integer primary key, email varchar(255), optedout integer);
@@ -26,11 +28,11 @@ def error(message) #broken; sends 200 rather than 400
 	exit
 end
 
-def new(data, email, sentence)
+def new(data, email, sentence, time)
 	db = SQLite3::Database.new("picdata.db")
 	turn = 1
 	optedout = 0
-	
+		
 	db.execute("insert into games (turn) values (?)", turn)
 	gameid = db.last_insert_row_id().to_i
 
@@ -49,8 +51,14 @@ def new(data, email, sentence)
 		end
 	
 		token = rand(10000)
-		params = [gameid, playerid, turn, token]
-		db.execute("insert into gamestoplayers (gameid, playerid, turn, token) values (?,?,?,?)", params) 
+		
+		if (turn == 1) then
+			params = [gameid, playerid, turn, token, time]
+			db.execute("insert into gamestoplayers (gameid, playerid, turn, token, time) values (?,?,?,?,?)", params) 
+		else
+			params = [gameid, playerid, turn, token]
+			db.execute("insert into gamestoplayers (gameid, playerid, turn, token) values (?,?,?,?)", params) 
+		end
 		turn = turn + 1
 	end
 	
@@ -67,7 +75,7 @@ def displayall(gameid,turn,token)
 		picture = db.execute("select data from pics where gameid = ?", gameid)
 		sentence = db.execute("select sentence from sentences where gameid = ?", gameid)
 			
-		allturns = [picture,sentence].transpose.flatten
+		allturns = picture.zip(sentence).flatten.reject{ |e| e.nil? }
 		
 		template_data = IO.read('cgi-bin/templates/displayall.html.erb')
 		template = ERB.new(template_data)
@@ -146,15 +154,17 @@ def send_email(gameid,turn)
   # create tmail message
 end
 
-def savesentence(sentence,gameid,turn)
+def savesentence(sentence,gameid,turn,time)
 	db = SQLite3::Database.new("picdata.db")
 	db.execute("insert into sentences (sentence, gameid, turn) values (?,?,?)", [sentence, gameid, turn]) 
+	db.execute("update gamestoplayers set time = ? where gameid = ? and turn = ?",[time,gameid,turn])
 	db.execute("update games set turn=? where gameid=gameid",turn)
 end
 
-def savepic(data,gameid,turn)
+def savepic(data,gameid,turn,time)
 	db = SQLite3::Database.new("picdata.db")
 	db.execute("insert into pics (data, gameid, turn) values (?,?,?)", [data, gameid, turn]) 
+	db.execute("update gamestoplayers set time = ? where gameid = ? and turn = ?",[time,gameid,turn])
 	db.execute("update games set turn=? where gameid=gameid",turn)
 end
 
@@ -167,6 +177,7 @@ def main
 	if (cmd == "new") # Creates a new game
 		data = URI.unescape($params["data"][0]).to_s # changes &&s for instance
 		sentence = $params["sentence"][0]
+		time = Time.now.to_i
 		
 		if ($params["email"][0] == "") 
 			error("Type a valid email address.")
@@ -179,7 +190,7 @@ def main
 		end
 		
 		email.each {|i| i.strip! }
-		gameid = new(data, email, sentence)	
+		gameid = new(data, email, sentence,time)	
 		send_email(gameid, 1)
 	elsif (cmd == "show") # Shows the current turn, but only to someone who has the token!
 		gameid = $params["gameid"][0]
@@ -195,13 +206,15 @@ def main
 		sentence = URI.unescape($params["sentence"][0]).to_s
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i+1
-		savesentence(sentence,gameid,turn)
+		time = Time.now.to_i
+		savesentence(sentence,gameid,turn,time)
 		send_email(gameid,turn)
 	elsif (cmd == "pic") # Updates database with a picture
 		data = URI.unescape($params["data"][0]).to_s
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i+1
-		savepic(data,gameid,turn)
+		time = Time.now.to_i
+		savepic(data,gameid,turn,time)
 		send_email(gameid,turn)
 	end
 end

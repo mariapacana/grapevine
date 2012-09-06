@@ -16,16 +16,16 @@
     
 		<section>   		
 			<h2>Player 1</h2>
-				<img src="<%= allturns[0] %>">
+				<img class="picture" src="<%= allturns[0] %>">
 				<div class="sentence"><%= allturns[1] %></div>	
 			<% for i in 2..allturns.size-1 %>
 			<h2>Player <%= i %></h2>
-				<% if i.even? then %>
-					<img src="<%= allturns[i] %>">
-				<% else %>
-					<div class="sentence"><%= allturns[i] %></div>
-				<% end %>
-			<% end %>
+					<% if i.even? %>
+						<img class="picture" src="<%= allturns[i] %>">
+					<% else %>
+						<div class="sentence"><%= allturns[i] %></div>
+					<% end %>
+			<% end %>		
 		</section>
 
 </body>

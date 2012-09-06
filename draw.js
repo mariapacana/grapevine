@@ -45,8 +45,10 @@ function onloadSentence() {
 	submitPicButton = $("submitPicButton");
 	status = $("status");
 	ctx = can.getContext("2d");
+	close = $("close");
 	
 	can.addEventListener("mouseover", draw, false);
+	close.addEventListener("click", hide, false);
 	eraseAllButton.addEventListener("click", eraseAll, false);
 	eraseButton.addEventListener("click", toggleErase, false);
 	submitPicButton.addEventListener("click", submitPic, false);
@@ -56,7 +58,9 @@ function onloadPicture() {
 	submitSentenceButton = $("submitSentenceButton");
 	sentence = $("sentenceInput").value;
 	status = $("status");
+	close = $("close");
 	
+	close.addEventListener("click", hide, false);
 	submitSentenceButton.addEventListener("click", submitSentence, false);
 };
 

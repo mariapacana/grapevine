@@ -18,11 +18,15 @@
     </header>
     
 		<section>   
+			<div id="howto" width = "825" height = "10">
+			<img id="close" src="../images/close.png">
+			Grapevine is a drawing game that you can play with your friends! Create a drawing based on the caption that your friend wrote. 
+			</div>
 			<h1>1. Your friend drew you this picture.</h1>
-			<img id="pic" src="<%= picdata %>">
+			<img class="picture" src="<%= picdata %>">
 			<br>
 			<h1>2. Describe what you see!</h1>
-			<input id="sentenceInput" type="text">
+			<input id="sentenceInput" class="sentence" type="text">
 			<button id="submitSentenceButton">Submit</button>
 			<div id="status" width="825" height="10"></div>
 			</div>
