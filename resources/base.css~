@@ -2,6 +2,7 @@ body {
   margin: 0 auto;
 	font-family: 'Galdeano', sans-serif;
 	font-size: 100%;
+	background: black;
   min-width: 800px; /*won't let page get narrower than this*/
 }
 
@@ -14,33 +15,15 @@ margin-left: auto;
 margin-right: auto; 
 padding-top: 10px;
 padding-bottom: 10px;
-border-bottom: solid;
-border-color: #e04b00;
-border-width: 3px;
 text-align: center;
-color: white;
-background-color: #ff5500;
+color: #ff4b00;
+background-color: white;/*#ff5500;*/
 }
 
 .header h1 {
 font-size: 20%;
 font-family: 'Source Sans Pro', sans-serif;
 margin-bottom: .01px;
-}
-
-.picture {   
-display: block;   
-margin-left: 25px;   
-margin-right: auto; 
-margin-top: 12px;
--webkit-user-select: none;
-border:1px solid #c3c3c3;
-}
-
-.sentence { 
-margin-left: 25px;
-margin-right: auto;
-margin-top: 12px;
 }
 
 section {
@@ -57,6 +40,21 @@ section h1 {  /*spaces mean children (not nec. direct)*/
 font-size: 120%;
 margin-top: 20px;
 margin-bottom: 0px;
+}
+
+.picture {   
+display: block;   
+margin-left: 25px;   
+margin-right: auto; 
+margin-top: 12px;
+-webkit-user-select: none;
+border:1px solid #c3c3c3;
+}
+
+.sentence { 
+margin-left: 25px;
+margin-right: auto;
+margin-top: 12px;
 }
 
 #howto {

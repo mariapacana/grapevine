@@ -72,10 +72,23 @@ def displayall(gameid,turn,token)
 	
 	if (turn == maxturns) 
 		allturns = []
+
 		picture = db.execute("select data from pics where gameid = ?", gameid)
 		sentence = db.execute("select sentence from sentences where gameid = ?", gameid)
-			
-		allturns = picture.zip(sentence).flatten.reject{ |e| e.nil? }
+		player = db.execute("select email from players as p join gamestoplayers as g on p.playerid = g.playerid where gameid = ?", gameid).flatten
+		
+		#(0..player.size-1).each do |i|
+		#	player[i]=player[i].gsub(/@.*/,'')
+		#end
+		
+		for i in player
+			i.gsub!(/@.*/,'')
+		end
+		
+		(0...[picture.size, sentence.size].max).each do |i|
+			allturns << picture[i] if i < picture.size
+			allturns << sentence[i] if i < sentence.size
+		end
 		
 		template_data = IO.read('cgi-bin/templates/displayall.html.erb')
 		template = ERB.new(template_data)
@@ -89,7 +102,6 @@ end
 
 def show(gameid,turn,token)
 	db = SQLite3::Database.new("picdata.db")
-	#maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]
 	correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
 	
 	if (token == correct_token)

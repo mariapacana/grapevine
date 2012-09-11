@@ -15,11 +15,11 @@
     </header>
     
 		<section>   		
-			<h2>Player 1</h2>
+			<h2>Player <%= player[0] %></h2>
 				<img class="picture" src="<%= allturns[0] %>">
 				<div class="sentence"><%= allturns[1] %></div>	
 			<% for i in 2..allturns.size-1 %>
-			<h2>Player <%= i %></h2>
+			<h2>Player <%= player[i-1] %></h2>
 					<% if i.even? %>
 						<img class="picture" src="<%= allturns[i] %>">
 					<% else %>
