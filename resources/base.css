@@ -2,38 +2,33 @@ body {
   margin: 0 auto;
 	font-family: 'Galdeano', sans-serif;
 	font-size: 100%;
-	background: #7fdfff;
+	background: #cdecff;
   min-width: 800px; /*won't let page get narrower than this*/
 }
 
-.header {	
+
+section {
+background-color: white;
+display: block;
+width: 900px;
+margin-top: 0px;
+margin-left: auto;
+margin-right: auto;
+padding-left: 10px;
+padding-right: 10px;
+}
+
+section header {	
 font-family: 'Dancing Script', cursive, bold;
 font-size: 400%;
 display: block;
 margin-top: 0px;
 margin-left: auto;   
 margin-right: auto; 
-padding-top: 10px;
-padding-bottom: 10px;
+padding-top: 15px;
+padding-bottom: 15px;
 text-align: center;
 color: #ff4b00;
-background-color: white;/*#ff5500;*/
-}
-
-.header h1 {
-font-size: 20%;
-font-family: 'Source Sans Pro', sans-serif;
-margin-bottom: .01px;
-}
-
-section {
-background-color: white;
-display: block;
-width: 900px;
-height: 900px;
-margin-top: 20px;
-margin-left: auto;
-margin-right: auto;
 }
 
 section h1 {  /*spaces mean children (not nec. direct)*/
@@ -80,6 +75,7 @@ display: block;
 margin-left: 25px;
 margin-top: 10px;
 margin-bottom: 0px;
+background-color: white;
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;
 width:845px;
@@ -89,6 +85,7 @@ width:845px;
 margin-left: 25px;
 margin-right: auto;
 margin-top: 0px;
+background-color: white;
 }
 
 #email { /*hash matches id*/
