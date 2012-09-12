@@ -29,7 +29,7 @@
 			<input id="sentenceInput" class="sentence" type="text">
 			<button id="submitSentenceButton">Submit</button>
 			<div id="status" width="825" height="10"></div>
-					<br>
+			<br>
 			<br>
 		</section>
 		

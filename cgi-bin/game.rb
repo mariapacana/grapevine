@@ -68,7 +68,7 @@ end
 def displayall(gameid,turn,token)
 	db = SQLite3::Database.new("picdata.db")
 	maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]
-	correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,1])[0][0]
+	correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
 	
 	if (turn == maxturns) 
 		allturns = []

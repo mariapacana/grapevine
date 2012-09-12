@@ -1,8 +1,4 @@
-//This borrows liberally from various Canvas tutorial sites 
-//including http://dev.opera.com/articles/view/html5-canvas-painting/
-//and others I can't remember!
-
-//var g = {};
+//This borrows liberally from various Canvas tutorial sites, such as http://dev.opera.com/articles/view/html5-canvas-painting/.
 
 var can;
 var ctx;
@@ -35,7 +31,6 @@ function onload() {
 	eraseAllButton.addEventListener("click", eraseAll, false);
 	eraseButton.addEventListener("click", toggleErase, false);
 	submitButton.addEventListener("click", submitFirstTurn, false);
-	submitPicButton.addEventListener("click", submitPic, false);
 };
 
 function onloadSentence() {
@@ -160,6 +155,10 @@ function submitFirstTurn(e) {
   } else {
   	email = email.split(/ /);
   }
+  
+  if (!validateSentence(sentence)) {
+  	return;
+  } 
 	
 	for (var i = 0; i < email.length; i++) {
 		if (!email[i].match(/.*@.*\..*/) || email[i].length == 0) {
@@ -179,6 +178,11 @@ function submitFirstTurn(e) {
 function submitSentence() {
 	var params = getparams();
 	var url = "cmd=sentence&sentence="+$("sentenceInput").value+"&gameid="+params.gameid+"&turn="+params.turn;
+	var sentence = $("sentenceInput").value.trim();
+  
+	if (!validateSentence(sentence)) {
+  	return;
+  } 
 	
   sendRequest(
   	"/cgi-bin/game.rb", "POST", url,
@@ -197,5 +201,16 @@ function submitPic() {
    	function(response) {
    		 $("status").innerText = "Picture sent!";
    	});
+};
+
+function validateSentence(sentence) {
+	if (sentence == "") {
+  	$("status").innerText = "Missing input in the sentence field.";
+  	return false;
+  } else if (sentence.length > 50) {
+    $("status").innerText = "Please limit your description to 50 characters or less."
+   return false;
+  }
+  return true;
 };
 

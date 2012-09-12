@@ -29,7 +29,7 @@
 			<button id="eraseButton">Erase</button>
 			<button id="submitPicButton">Submit</button>
 			<div id = "status" width = "750" height = "10"></div>
-						<br>
+			<br>
 			<br>
 		</section>
 		
