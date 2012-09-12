@@ -70,28 +70,26 @@ def displayall(gameid,turn,token)
 	maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]
 	correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
 	
-	if (turn == maxturns) 
-		allturns = []
+	if (token == correct_token)
+		if (turn == maxturns) 
+			allturns = []
 
-		picture = db.execute("select data from pics where gameid = ?", gameid)
-		sentence = db.execute("select sentence from sentences where gameid = ?", gameid)
-		player = db.execute("select email from players as p join gamestoplayers as g on p.playerid = g.playerid where gameid = ?", gameid).flatten
+			picture = db.execute("select data from pics where gameid = ?", gameid)
+			sentence = db.execute("select sentence from sentences where gameid = ?", gameid)
+			player = db.execute("select email from players as p join gamestoplayers as g on p.playerid = g.playerid where gameid = ?", gameid).flatten
 		
-		#(0..player.size-1).each do |i|
-		#	player[i]=player[i].gsub(/@.*/,'')
-		#end
+			for i in player
+				i.gsub!(/@.*/,'')
+			end
 		
-		for i in player
-			i.gsub!(/@.*/,'')
+			(0...[picture.size, sentence.size].max).each do |i|
+				allturns << picture[i] if i < picture.size
+				allturns << sentence[i] if i < sentence.size
+			end
+		
+			template_data = IO.read('cgi-bin/templates/displayall.html.erb')
+			template = ERB.new(template_data)
 		end
-		
-		(0...[picture.size, sentence.size].max).each do |i|
-			allturns << picture[i] if i < picture.size
-			allturns << sentence[i] if i < sentence.size
-		end
-		
-		template_data = IO.read('cgi-bin/templates/displayall.html.erb')
-		template = ERB.new(template_data)
 	else
 		template_data = IO.read('cgi-bin/templates/wrongtoken.html.erb')
 		template = ERB.new(template_data)

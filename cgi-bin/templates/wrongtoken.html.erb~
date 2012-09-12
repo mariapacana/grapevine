@@ -11,17 +11,13 @@
 </head>
 		
 <body>
-		<script type="text/javascript" src="../util.js"></script>
-		<script type="text/javascript" src="../draw.js"></script>
-
-		<section>  
-		<header class="header">  
-      Grapevine
-    </header> 
-		Sorry, you seem to have the wrong page. Please check your email and try again.
-		</section>
-
+			<section>   
+				<header class="header">  
+		   	 Grapevine
+		 		</header>
+		
+			
+		</section>		
 </body>
 </html>
-
 
