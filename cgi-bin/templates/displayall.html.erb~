@@ -25,7 +25,7 @@
 						<div class="sentence"><%= allturns[i] %></div>
 					<% end %>
 			<% end %>		
-					<br>
+			<br>
 			<br>
 		</section>
 

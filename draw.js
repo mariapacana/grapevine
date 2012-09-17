@@ -31,6 +31,14 @@ function onload() {
 	eraseAllButton.addEventListener("click", eraseAll, false);
 	eraseButton.addEventListener("click", toggleErase, false);
 	submitButton.addEventListener("click", submitFirstTurn, false);
+	
+	Recaptcha.create("6Le9XNYSAAAAAFxZ0cHVUx3_tC4PI1Tjvzhrg8pB",
+	   "recaptcha",
+    {
+      theme: "blue",
+      callback: Recaptcha.focus_response_field
+    }
+  );
 };
 
 function onloadSentence() {

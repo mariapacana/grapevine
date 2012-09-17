@@ -3,6 +3,7 @@ body {
 	font-family: 'Galdeano', sans-serif;
 	font-size: 100%;
 	background: #cdecff;
+	min-height: 1200px;
   min-width: 800px; /*won't let page get narrower than this*/
 }
 
@@ -11,6 +12,7 @@ section {
 background-color: white;
 display: block;
 width: 900px;
+min-height: 1200px;
 margin-top: 0px;
 margin-left: auto;
 margin-right: auto;
@@ -20,7 +22,7 @@ padding-right: 10px;
 
 section header {	
 font-family: 'Dancing Script', cursive, bold;
-font-size: 400%;
+font-size: 600%;
 display: block;
 margin-top: 0px;
 margin-left: auto;   
@@ -42,8 +44,10 @@ display: block;
 margin-left: 25px;   
 margin-right: auto; 
 margin-top: 12px;
+width: 848px;
+height: 550px;
 -webkit-user-select: none;
-border:1px solid #c3c3c3;
+border:2px solid #c3c3c3;
 }
 
 .sentence { 
@@ -58,6 +62,8 @@ background-color: #DCDCDC;
 padding: 10px;
 border-radius: 15px;
 margin-bottom: 20px;
+margin: 0 auto;
+width: 850px; 
 }
 
 #close {
@@ -73,12 +79,20 @@ filter: alpha(opacity=50);
 #sentenceInput { /*hash matches id*/
 display: block;
 margin-left: 25px;
+margin-right: 25px;
 margin-top: 10px;
 margin-bottom: 0px;
+width: 844px;
 background-color: white;
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;
-width:845px;
+}
+
+input[type=text] {
+	border: solid 2px #666; 
+	padding: 2px;
+	border-radius: 6px;
+	outline-color: #ff3600;
 }
 
 #emailForm { /*hash matches id*/
@@ -89,22 +103,30 @@ background-color: white;
 }
 
 #email { /*hash matches id*/
+margin-top: 12px;
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;
-width:400px;
+width:710px;
+}
+
+#recaptcha {
+margin-top: 12px;
 }
 
 #status {
 margin-left: 25px;
+margin-top: 12px;
 font-family: 'Helvetica', sans-serif;
 font-size: 100%;
 color: blue;
-margin-top: 12px;
+width: 825px;
+height: 10px;
 }
 
 button {
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;
+min-height: 25px;
 margin-right: 3px;
 margin-top: 10px;
 }

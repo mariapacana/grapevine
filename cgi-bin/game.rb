@@ -135,7 +135,7 @@ def send_email(gameid,turn)
     player_emails = []
   	player_ids = db.execute("select playerid from gamestoplayers where gameid = ?", gameid)
   	player_ids.each {|i| player_emails << db.execute("select email from players where playerid = ?",i[0])[0][0] }
-  	token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,1])[0][0]
+  	token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
 
   	template_data = IO.read('cgi-bin/templates/displayallemail.txt.erb')
   	template = ERB.new(template_data)
