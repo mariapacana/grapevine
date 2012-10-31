@@ -2,6 +2,7 @@
 require "cgi"
 require "sqlite3"
 require "uri"
+require "net/http"
 require "json"
 require "erb"
 require "time"
@@ -188,11 +189,30 @@ def main
 		data = URI.unescape($params["data"][0]).to_s # changes &&s for instance
 		sentence = URI.unescape($params["sentence"][0])
 		email = URI.unescape($params["email"][0])
-		challenge = URI.unescape($params["challenge"][0])
-		response = URI.unescape($params["response"][0])
+		challenge = $params["challenge"][0]
+		response = $params["response"][0]
 		time = Time.now.to_i
+	
+		recaptcha_url = "http://www.google.com/recaptcha/api/verify" + 
+		    "?privatekey=6Le9XNYSAAAAAETyJO4uJYxZTjXfopX6wenL9acR" +
+		    "&remoteip=#{ENV['REMOTE_ADDR']}" +
+		    "&challenge=#{URI.escape(challenge)}" +
+		    "&response=#{URI.escape(response)}" 
+		    
+		r = Net::HTTP.get_response(URI.parse(recaptcha_url).host, URI.parse(recaptcha_url).path)
 		
-		$cgi.out("text/plain") { "challenge=" + challenge + " response=" + response }
+		if r.code != '200' 
+			$cgi.out("text/plain") { "Failed to check CAPTCHA (error #{r.code}).  Sorry, please try again." }
+			return
+		end
+		
+		lines = r.body.split("\n")
+		if lines[0] != "true" 
+			$cgi.out("text/plain") { "Invalid CAPTCHA answer: #{lines[1]}" }
+			return
+		end
+
+
 		
 		if (email == "") 
 			error("Type a valid email address.")
