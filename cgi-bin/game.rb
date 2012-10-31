@@ -186,16 +186,21 @@ def main
 	
 	if (cmd == "new") # Creates a new game
 		data = URI.unescape($params["data"][0]).to_s # changes &&s for instance
-		sentence = $params["sentence"][0]
+		sentence = URI.unescape($params["sentence"][0])
+		email = URI.unescape($params["email"][0])
+		challenge = URI.unescape($params["challenge"][0])
+		response = URI.unescape($params["response"][0])
 		time = Time.now.to_i
 		
-		if ($params["email"][0] == "") 
+		$cgi.out("text/plain") { "challenge=" + challenge + " response=" + response }
+		
+		if (email == "") 
 			error("Type a valid email address.")
 		else
-			if ($params["email"][0].include? ",") 
-				email = $params["email"][0].split(",")
+			if (email.include? ",") 
+				email = email.split(",")
 			else
-				email = $params["email"][0].split(" ")
+				email = email.split(" ")
 			end
 		end
 		

@@ -3,7 +3,7 @@ body {
 	font-family: 'Galdeano', sans-serif;
 	font-size: 100%;
 	background: #cdecff;
-	min-height: 1200px;
+	height: 1300px;
   min-width: 800px; /*won't let page get narrower than this*/
 }
 
@@ -12,7 +12,7 @@ section {
 background-color: white;
 display: block;
 width: 900px;
-min-height: 1200px;
+min-height: 1300px;
 margin-top: 0px;
 margin-left: auto;
 margin-right: auto;
@@ -107,10 +107,6 @@ margin-top: 12px;
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;
 width:710px;
-}
-
-#recaptcha {
-margin-top: 12px;
 }
 
 #status {

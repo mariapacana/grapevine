@@ -35,8 +35,8 @@ function onload() {
 	Recaptcha.create("6Le9XNYSAAAAAFxZ0cHVUx3_tC4PI1Tjvzhrg8pB",
 	   "recaptcha",
     {
-      theme: "blue",
-      callback: Recaptcha.focus_response_field
+      theme: "red"//,
+      //callback: Recaptcha.focus_response_field
     }
   );
 };
@@ -174,13 +174,21 @@ function submitFirstTurn(e) {
     return;
     }
 	}	
+	
+	var recaptchaChallenge = Recaptcha.get_challenge();
+	var recaptchaResponse = Recaptcha.get_response();
+	Recaptcha.destroy();
   
-  //console.log("/cgi-bin/game.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&sentence=" + sentence + "&email=" +$("email").value);
-  
-  sendRequest("/cgi-bin/game.rb", "POST", "cmd=new&data=" + encodeURIComponent(img) + "&sentence=" + sentence + "&email=" +$("email").value,
+  sendRequest("/cgi-bin/game.rb", "POST", 
+  		        "cmd=new&data=" + encodeURIComponent(img) +   //changes spaces, &&s, etc.
+  		        "&sentence=" + encodeURIComponent(sentence) + 
+  		        "&email=" + encodeURIComponent($("email").value) +
+  		        "&challenge=" + encodeURIComponent(recaptchaChallenge) +
+  		        "&response=" + encodeURIComponent(recaptchaResponse),
    	function(response) {
-   		 $("status").innerText = "Game started!";
+   		 $("status").innerText = "Game started!  server sez: \"" + response + "\"";
    	});
+  
 };
 
 function submitSentence() {
