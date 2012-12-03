@@ -75,13 +75,13 @@ function draw(e) {
 	e.preventDefault();	
 };
 
-function setUpCanvas (can) {		
+function setUpCanvas(can) {		
 	//console.log(erasing);
 	//console.log(can.style.cursor);
 	if (!erasing) {
 		can.style.cursor = "crosshair";
 	} else {
-		can.style.cursor = "url('images/eraser.png') 10 10, auto";
+		can.style.cursor = "url('/images/eraser.png') 10 10, auto";
 	}
 };
 
