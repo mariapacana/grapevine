@@ -193,13 +193,17 @@ def main
 		response = $params["response"][0]
 		time = Time.now.to_i
 	
-		recaptcha_url = "http://www.google.com/recaptcha/api/verify" + 
-		    "?privatekey=6Le9XNYSAAAAAETyJO4uJYxZTjXfopX6wenL9acR" +
-		    "&remoteip=#{ENV['REMOTE_ADDR']}" +
-		    "&challenge=#{URI.escape(challenge)}" +
-		    "&response=#{URI.escape(response)}" 
-		    
-		r = Net::HTTP.get_response(URI.parse(recaptcha_url).host, URI.parse(recaptcha_url).path)
+		form_data = {
+		  "privatekey" => "6Le9XNYSAAAAAETyJO4uJYxZTjXfopX6wenL9acR",
+		  "remoteip" => ENV['REMOTE_ADDR'],
+		  "challenge" => URI.escape(challenge),
+		  "response" => URI.escape(response),
+		}
+		
+		uri = URI.parse("http://www.google.com/recaptcha/api/verify")
+		r = Net::HTTP.post_form(uri, form_data)
+		
+		#r = Net::HTTP.get_response(URI.parse(recaptcha_url).host, URI.parse(recaptcha_url).path)
 		
 		if r.code != '200' 
 			$cgi.out("text/plain") { "Failed to check CAPTCHA (error #{r.code}).  Sorry, please try again." }
@@ -208,11 +212,9 @@ def main
 		
 		lines = r.body.split("\n")
 		if lines[0] != "true" 
-			$cgi.out("text/plain") { "Invalid CAPTCHA answer: #{lines[1]}" }
+			$cgi.out("text/plain") { "Invalid CAPTCHA answer: #{lines[1]} " }
 			return
 		end
-
-
 		
 		if (email == "") 
 			error("Type a valid email address.")

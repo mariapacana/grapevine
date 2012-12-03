@@ -15,7 +15,6 @@ var submitButton;
 var started = false;
 
 function onload() {
-  //g.can = $("myCanvas");
 	can = $("myCanvas"); 
 	form = $("form");
 	eraseAllButton = $("eraseAllButton");
@@ -35,8 +34,8 @@ function onload() {
 	Recaptcha.create("6Le9XNYSAAAAAFxZ0cHVUx3_tC4PI1Tjvzhrg8pB",
 	   "recaptcha",
     {
-      theme: "red"//,
-      //callback: Recaptcha.focus_response_field
+      theme: "clean",
+      callback: Recaptcha.focus_response_field
     }
   );
 };
@@ -82,7 +81,7 @@ function setUpCanvas (can) {
 	if (!erasing) {
 		can.style.cursor = "crosshair";
 	} else {
-		can.style.cursor = "url('/images/eraser.png') 10 10, auto";
+		can.style.cursor = "url('images/eraser.png') 10 10, auto";
 	}
 };
 
@@ -177,7 +176,6 @@ function submitFirstTurn(e) {
 	
 	var recaptchaChallenge = Recaptcha.get_challenge();
 	var recaptchaResponse = Recaptcha.get_response();
-	Recaptcha.destroy();
   
   sendRequest("/cgi-bin/game.rb", "POST", 
   		        "cmd=new&data=" + encodeURIComponent(img) +   //changes spaces, &&s, etc.
@@ -188,6 +186,8 @@ function submitFirstTurn(e) {
    	function(response) {
    		 $("status").innerText = "Game started!  server sez: \"" + response + "\"";
    	});
+   	
+  Recaptcha.destroy();
   
 };
 
