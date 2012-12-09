@@ -34,7 +34,6 @@ end
 # 'message' is a string containing additional details.
 def send_response(success, message)
 	$cgi.out("text/plain") { {"success" => success, "message" => message}.to_json } # Converts hash to JSON.
-	exit
 end
 
 def new(data, email, sentence, time)
@@ -221,19 +220,19 @@ def main
 		lines = r.body.split("\n")
 		if lines[0] != "true" 
 			send_response(false, lines[1])
+			return
 		else
+			if (email.include? ",") 
+				email = email.split(",")
+			else
+				email = email.split(" ")
+			end				
+			email.each {|i| i.strip! }
+			
+			gameid = new(data, email, sentence, time)	
+			send_email(gameid, 1)
 			send_response(true, lines[1])
-		end
-		
-		if (email.include? ",") 
-			email = email.split(",")
-		else
-			email = email.split(" ")
-		end
-		
-		email.each {|i| i.strip! }
-		gameid = new(data, email, sentence,time)	
-		send_email(gameid, 1)
+		end	
 	elsif (cmd == "show") # Shows the current turn, but only to someone who has the token!
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i

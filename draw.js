@@ -157,16 +157,16 @@ function submitFirstTurn(e) {
   var email = $("email").value.trim();
   var sentence = $("sentenceInput").value.trim();
   
-  if (email.match(/,/)) {
+  if (!validateSentence(sentence)) {
+  	return;
+  } 
+	
+	if (email.match(/,/)) {
    	email = email.split(/,/);
   } else {
   	email = email.split(/ /);
   }
   
-  if (!validateSentence(sentence)) {
-  	return;
-  } 
-	
 	for (var i = 0; i < email.length; i++) {
 		if (!email[i].match(/.*@.*\..*/) || email[i].length == 0) {
 		$("status").innerText = "Please enter valid email addresses.";
@@ -197,13 +197,12 @@ function submitFirstTurn(e) {
 	 				default:
 	 					$("status").innerText = "Failed to check CAPTCHA (" + parsedResponse.message + "). Sorry, please try again."; 
 	 			}	
+	 			Recaptcha.reload();
 		 	} else {
 		 	 	$("status").innerText = "Turn successfully submitted!";
+		 	 	Recaptcha.destroy();
 		 	}
   	});
-   	
-  Recaptcha.destroy();
-  
 };
 
 function submitSentence() {
