@@ -35,7 +35,7 @@ function onload() {
 	   "recaptcha",
     {
       theme: "clean",
-      callback: Recaptcha.focus_response_field
+      //callback: Recaptcha.focus_response_field
     }
   );
 };
@@ -178,14 +178,29 @@ function submitFirstTurn(e) {
 	var recaptchaResponse = Recaptcha.get_response();
   
   sendRequest("/cgi-bin/game.rb", "POST", 
-  		        "cmd=new&data=" + encodeURIComponent(img) +   //changes spaces, &&s, etc.
+  		        "cmd=new&data=" + encodeURIComponent(img) +   //encodeURI changes spaces, &&s, etc.
   		        "&sentence=" + encodeURIComponent(sentence) + 
   		        "&email=" + encodeURIComponent($("email").value) +
   		        "&challenge=" + encodeURIComponent(recaptchaChallenge) +
   		        "&response=" + encodeURIComponent(recaptchaResponse),
    	function(response) {
-   		 $("status").innerText = "Game started!  server sez: \"" + response + "\"";
-   	});
+   	  var parsedResponse = JSON.parse(response);
+   	 	
+		 	if (!parsedResponse.success) {
+	 			switch (parsedResponse.message) {
+	 				case "incorrect-captcha-sol": 
+	 					$("status").innerText = "Invalid CAPTCHA answer, try again.";
+	 					break;
+	 				case "invalid-request-cookie":
+	 					$("status").innerText = "The challenge parameter of the verify script was incorrect."; 
+	 					break;
+	 				default:
+	 					$("status").innerText = "Failed to check CAPTCHA (" + parsedResponse.message + "). Sorry, please try again."; 
+	 			}	
+		 	} else {
+		 	 	$("status").innerText = "Turn successfully submitted!";
+		 	}
+  	});
    	
   Recaptcha.destroy();
   

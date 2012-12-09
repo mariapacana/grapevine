@@ -2,9 +2,16 @@ body {
   margin: 0 auto;
 	font-family: 'Galdeano', sans-serif;
 	font-size: 100%;
-	background: #cdecff;
-	height: 1300px;
-  min-width: 800px; /*won't let page get narrower than this*/
+	/* Based on Carbon Fibre by Atle Mo and Lea Verou at http://lea.verou.me/css3patterns/#carbon-fibre */
+	background:
+		-webkit-radial-gradient(#717171 15%, transparent 16%) 0 0,
+		-webkit-radial-gradient(#717171 15%, transparent 16%) 8px 8px,
+		-webkit-radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+		-webkit-radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+	background-color:#888;
+	background-size:16px 16px;
+	height: 100%;
+  min-width: 800px; /* won't let page get narrower than this */
 }
 
 
@@ -12,7 +19,7 @@ section {
 background-color: white;
 display: block;
 width: 900px;
-height: 1300px;
+height: 100%;
 margin-top: 0px;
 margin-left: auto;
 margin-right: auto;
@@ -58,7 +65,7 @@ margin-top: 12px;
 
 #howto {
 text-align: justify;
-background-color: #DCDCDC;
+background-color: #b3e9ff;
 padding: 10px;
 border-radius: 15px;
 margin-bottom: 20px;
@@ -116,7 +123,7 @@ font-family: 'Helvetica', sans-serif;
 font-size: 100%;
 color: blue;
 width: 825px;
-height: 10px;
+height: 20px;
 }
 
 button {
@@ -141,6 +148,11 @@ button#submitSentenceButton {
 font-family: 'Helvetica', sans-serif;
 font-size: 70%;
 margin-left: 25px;
+}
+
+iframe {
+display:none; 
+!important;
 }
 
 

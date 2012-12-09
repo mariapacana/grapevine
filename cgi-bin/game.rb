@@ -24,8 +24,16 @@ CREATE TABLE players (playerid integer primary key, email varchar(255), optedout
 $cgi = CGI.new
 $params = $cgi.params
 
-def error(message) #broken; sends 200 rather than 400
+def error(message) # broken; sends 200 rather than 400
 	$cgi.out({"Status" => "400 Bad Request"}) { message }
+	exit
+end
+
+# Outputs a response as a JSON object.
+# 'success' is true or false.
+# 'message' is a string containing additional details.
+def send_response(success, message)
+	$cgi.out("text/plain") { {"success" => success, "message" => message}.to_json } # Converts hash to JSON.
 	exit
 end
 
@@ -200,30 +208,27 @@ def main
 		  "response" => URI.escape(response),
 		}
 		
+		# Verifies that the Recaptcha solution is accurate
 		uri = URI.parse("http://www.google.com/recaptcha/api/verify")
 		r = Net::HTTP.post_form(uri, form_data)
 		
-		#r = Net::HTTP.get_response(URI.parse(recaptcha_url).host, URI.parse(recaptcha_url).path)
-		
-		if r.code != '200' 
-			$cgi.out("text/plain") { "Failed to check CAPTCHA (error #{r.code}).  Sorry, please try again." }
+		# If returns HTTP error code, sends status in reply as a JSON object
+		if r.code != '200' 			
+			send_response(false, "http-" + r.code)
 			return
 		end
 		
 		lines = r.body.split("\n")
 		if lines[0] != "true" 
-			$cgi.out("text/plain") { "Invalid CAPTCHA answer: #{lines[1]} " }
-			return
+			send_response(false, lines[1])
+		else
+			send_response(true, lines[1])
 		end
 		
-		if (email == "") 
-			error("Type a valid email address.")
+		if (email.include? ",") 
+			email = email.split(",")
 		else
-			if (email.include? ",") 
-				email = email.split(",")
-			else
-				email = email.split(" ")
-			end
+			email = email.split(" ")
 		end
 		
 		email.each {|i| i.strip! }
