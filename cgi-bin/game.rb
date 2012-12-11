@@ -36,7 +36,7 @@ def send_response(success, message)
 	$cgi.out("text/plain") { {"success" => success, "message" => message}.to_json } # Converts hash to JSON.
 end
 
-def new(data, email, sentence, time)
+def create(data, email, sentence, time)
 	db = SQLite3::Database.new("picdata.db")
 	turn = 1
 	optedout = 0
@@ -192,7 +192,7 @@ def main
   end
 	cmd = $params["cmd"][0]
 	
-	if (cmd == "new") # Creates a new game
+	if (cmd == "create") # Creates a new game
 		data = URI.unescape($params["data"][0]).to_s # changes &&s for instance
 		sentence = URI.unescape($params["sentence"][0])
 		email = URI.unescape($params["email"][0])
@@ -229,7 +229,7 @@ def main
 			end				
 			email.each {|i| i.strip! }
 			
-			gameid = new(data, email, sentence, time)	
+			gameid = create(data, email, sentence, time)	
 			send_email(gameid, 1)
 			send_response(true, lines[1])
 		end	
@@ -237,7 +237,7 @@ def main
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i
 		token = $params["token"][0].to_i
-		show(gameid,turn,token) 
+		show(gameid, turn, token) 
 	elsif (cmd == "displayall") # Shows all turns
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i
@@ -248,15 +248,15 @@ def main
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i+1
 		time = Time.now.to_i
-		savesentence(sentence,gameid,turn,time)
-		send_email(gameid,turn)
+		savesentence(sentence, gameid, turn, time)
+		send_email(gameid, turn)
 	elsif (cmd == "pic") # Updates database with a picture
 		data = URI.unescape($params["data"][0]).to_s
 		gameid = $params["gameid"][0]
 		turn = $params["turn"][0].to_i+1
 		time = Time.now.to_i
-		savepic(data,gameid,turn,time)
-		send_email(gameid,turn)
+		savepic(data, gameid, turn, time)
+		send_email(gameid, turn)
 	end
 end
 

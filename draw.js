@@ -178,7 +178,7 @@ function submitFirstTurn(e) {
 	var recaptchaResponse = Recaptcha.get_response();
   
   sendRequest("/cgi-bin/game.rb", "POST", 
-  		        "cmd=new&data=" + encodeURIComponent(img) +   //encodeURI changes spaces, &&s, etc.
+  		        "cmd=create&data=" + encodeURIComponent(img) +   //encodeURI changes spaces, &&s, etc.
   		        "&sentence=" + encodeURIComponent(sentence) + 
   		        "&email=" + encodeURIComponent($("email").value) +
   		        "&challenge=" + encodeURIComponent(recaptchaChallenge) +
@@ -207,7 +207,7 @@ function submitFirstTurn(e) {
 
 function submitSentence() {
 	var params = getparams();
-	var url = "cmd=sentence&sentence="+$("sentenceInput").value+"&gameid="+params.gameid+"&turn="+params.turn;
+	var url = "cmd=sentence&sentence="+encodeURIComponent($("sentenceInput").value)+"&gameid="+params.gameid+"&turn="+params.turn;
 	var sentence = $("sentenceInput").value.trim();
   
 	if (!validateSentence(sentence)) {
