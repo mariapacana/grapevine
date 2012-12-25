@@ -9,27 +9,15 @@
 </head>
 		
 <body>
- 		<section>   	
- 		
-			<header class="header">  
-      	Grapevine
-    	</header>	
-			<h2>Player <%= player[0] %></h2>
-				<img class="picture" src="<%= allturns[0] %>">
-				<div class="sentence"><%= allturns[1] %></div>	
-			<% for i in 2..allturns.size-1 %>
-			<h2>Player <%= player[i-1] %></h2>
-					<% if i.even? %>
-						<img class="picture" src="<%= allturns[i] %>">
-					<% else %>
-						<div class="sentence"><%= allturns[i] %></div>
-					<% end %>
-			<% end %>		
-			<br>
-			<br>
-		</section>
-
+	<section>
+	<header>  
+    	Grapevine
+	</header>	
+	  <% turndata.each do |turn| %>
+      <h2> <%= turn[1] %> </h2>
+      <% if turn[2] %> <img class="picture" src="<%= turn[2] %>" > <% end %>
+      <% if turn[3] %> <div class="sentence"><%= turn[3] %></div> <% end %>		
+    <% end %>
+  </section>
 </body>
 </html>
-
-
