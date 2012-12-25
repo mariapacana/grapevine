@@ -13,11 +13,9 @@
 	<header>  
     Grapevine
 	</header>	
-	  <% turndata.each do |turn| %>
-      <h2> <%= turn[1] %> </h2>
-      <% if turn[2] %> <img class="picture" src="<%= turn[2] %>" > <% end %>
-      <% if turn[3] %> <div class="sentence"><%= turn[3] %></div> <% end %>		
-    <% end %>
+	  You've successfully opted out of all future Grapevine games.
+	  <%= playerid %>
+	  <%= token %>
   </section>
 </body>
 </html>

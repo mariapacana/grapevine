@@ -133,9 +133,9 @@ def send_email(gameid,turn)
   maxturns = db.execute("select count(*) from gamestoplayers where gameid=?",gameid)[0][0]
   email_message = ''
 
-  # looks up game and turn to find next player and turn type
-  # load appropriate template and fill in blanks
-  # there are 3 types of template (pic, sentence, final)
+  # Looks up game and turn to find next player and turn type.
+  # Loads appropriate template and fills in blanks.
+  # There are 3 types of template (pic, sentence, final).
   if (turn == maxturns) 
     player_emails = []
     player_ids = db.execute("select playerid from gamestoplayers where gameid = ?", gameid)
@@ -184,6 +184,29 @@ def savepic(data,gameid,turn,time)
     db.execute("update gamestoplayers set time = ? where gameid = ? and turn = ?",[time, gameid, turn])
     db.execute("update games set turn=? where gameid=gameid", turn)
   end
+end
+
+def optout(playerid, token)
+  db = SQLite3::Database.new(DB_FILENAME)
+  
+=begin
+  current_turn = db.execute("select turn from gamestoplayers where playerid = ? and token = ?", [playerid, token])[0][0]
+  gameid = db.execute("select gameid from gamestoplayers where playerid = ? and token = ?", [playerid, token])[0][0]
+  
+  db.transaction do |db|
+    db.execute("update players set optedout = ? where playerid = ?", [1, playerid])
+    db.execute("delete from gamestoplayers where playerid = ? and token = ?", [playerid, token])
+    db.execute("update gamestoplayers set turn = turn - 1 where gameid = ? and turn = ?", [gameid, current_turn + 1])
+  end
+=end
+  
+  #ISSUE: Token not associated with current player, but the previous player!  
+  template_data = IO.read('cgi-bin/templates/optedout.html.erb')
+  template = ERB.new(template_data)
+  $cgi.out() { template.result(binding) }
+  
+  send_email(gameid, current_turn) 
+
 end
 
 def main
@@ -257,6 +280,10 @@ def main
     time = Time.now.to_i
     savepic(data, gameid, turn, time)
     send_email(gameid, turn)
+  elsif (cmd == "optout") # Removes player from this game.
+    playerid = $params["playerid"][0]
+    token = $params["token"][0].to_i
+    optout(playerid, token)
   end
 end
 
