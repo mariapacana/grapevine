@@ -14,10 +14,11 @@ body {
 		-webkit-radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
 	background-color: #888;
 	background-size: 16px 16px;
-	min-height: 100%;
+	/*min-height: 100% !important;*/
+	margin-top: 0px;
+	margin-bottom: 0px;
   min-width: 800px; /* won't let page get narrower than this */
 }
-
 
 section {
 background-color: white;

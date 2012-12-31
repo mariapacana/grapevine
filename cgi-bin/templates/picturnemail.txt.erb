@@ -1,5 +1,5 @@
-Hi there! Your friend <%= currentplayer_e %> sent you a drawing through Grapevine, the game where you have fun with words and sketches. 
+Hi there! Your friend <%= current_email %> sent you a drawing through Grapevine, the game where you have fun with words and sketches. 
 
-Click the link here to play: http://localhost:8000/cgi-bin/game.rb?cmd=show&gameid=<%= gameid %>&turn=<%= turn %>&token=<%= token %>
+Click the link here to play: http://localhost:8000/cgi-bin/game.rb?cmd=show&gameid=<%= gameid %>&turn=<%= turn %>&token=<%= current_token %>
 
-Otherwise, you can (permanently) opt out of Grapevine games here: http://localhost:8000/cgi-bin/game.rb?cmd=optout&playerid=<%= nextplayer_id %>&token=<%= token %>
+Otherwise, you can (permanently) opt out of Grapevine games here: http://localhost:8000/cgi-bin/game.rb?cmd=optout&playerid=<%= next_playerid %>&optout_token=<%= next_optout_token %>
