@@ -1,6 +1,5 @@
 html {
-	height: 100%;
-  min-height: 100%;
+  height: 100%;
 }
 
 body {
@@ -16,9 +15,10 @@ body {
 	background-color: #888;
 	background-size: 16px 16px;
   min-width: 800px; /* won't let page get narrower than this */
+  height: 100%;
 }
 
-#container {
+section {
   background-color: white;
   width: 900px;
   margin: 0 auto;
@@ -27,7 +27,7 @@ body {
   padding-right: 10px;
 }
 
-#container header {	
+section header {	
   font-family: 'Dancing Script', cursive, bold;
   font-size: 600%;
   display: block;
