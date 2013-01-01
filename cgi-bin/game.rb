@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# Copyright Maria Pacana 2013. All rights reserved.
+
 require "cgi"
 require "erb"
 require "json"
@@ -182,20 +184,29 @@ end
 def savesentence(sentence,gameid,turn,time)
   db = SQLite3::Database.new(DB_FILENAME)
 
-  db.transaction do |db|
-    db.execute("insert into sentences (sentence, gameid, turn) values (?,?,?)", [sentence, gameid, turn]) 
-    db.execute("update gamestoplayers set time = ? where gameid = ? and turn = ?", [time, gameid, turn])
-    db.execute("update games set turn=? where gameid=gameid", turn)
+  if (db.execute("select sentence from sentences where gameid = ? and turn = ?", [gameid,turn])[0] == nil) 
+    db.transaction do |db|
+      db.execute("insert into sentences (sentence, gameid, turn) values (?,?,?)", [sentence, gameid, turn]) 
+      db.execute("update gamestoplayers set time = ? where gameid = ? and turn = ?", [time, gameid, turn])
+      db.execute("update games set turn = ? where gameid = gameid", turn)
+    end
+    send_response(true, "Turn successfully submitted!")
+  else
+    send_response(false, "You've already played your turn.")
   end
 end
 
 def savepic(data,gameid,turn,time)
   db = SQLite3::Database.new(DB_FILENAME)
-
-  db.transaction do |db|
-    db.execute("insert into pics (data, gameid, turn) values (?,?,?)", [data, gameid, turn]) 
-    db.execute("update gamestoplayers set time = ? where gameid = ? and turn = ?",[time, gameid, turn])
-    db.execute("update games set turn=? where gameid=gameid", turn)
+  if (db.execute("select data from pics where gameid = ? and turn = ?", [gameid,turn])[0] == nil) 
+    db.transaction do |db|
+      db.execute("insert into pics (data, gameid, turn) values (?,?,?)", [data, gameid, turn]) 
+      db.execute("update gamestoplayers set time = ? where gameid = ? and turn = ?",[time, gameid, turn])
+      db.execute("update games set turn = ? where gameid = gameid", turn)
+    end
+    send_response(true, "Turn successfully submitted!")
+  else
+    send_response(false, "You've already played your turn.")
   end
 end
 

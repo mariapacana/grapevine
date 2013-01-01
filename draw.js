@@ -1,31 +1,32 @@
-//This borrows liberally from various Canvas tutorial sites, such as http://dev.opera.com/articles/view/html5-canvas-painting/.
+// Copyright 2013 Maria Pacana.
+// This borrows liberally from various Canvas tutorial sites, such as 
+// http://dev.opera.com/articles/view/html5-canvas-painting/.
 
-var can;
-var ctx;
-var canX;
-var canY;
-var canStyle = "#000000";
-var canWidth = 2;
+var canvas;
+var context;
+var canvasX;
+var canvasY;
+var canvasStyle = "#000000";
+var canvasWidth = 2;
 var canDraw = false;
 var erasing = false;
 var close;
 var eraseAllButton;
 var eraseButton;
 var submitButton;
-var started = false;
+var isDrawing = false;
 
 function onload() {
-	can = $("myCanvas"); 
-	form = $("form");
+	canvas = $("myCanvas"); 
 	eraseAllButton = $("eraseAllButton");
 	eraseButton = $("eraseButton");
 	submitButton = $("submitButton");
 	close = $("close");
-	picture = document.getElementsByClassName("picture");
+	picture = $("picture");
 	status = $("status");
-	ctx = can.getContext("2d");
+	context = canvas.getContext("2d");
 	
-	can.addEventListener("mouseover", draw,false);
+	canvas.addEventListener("mouseover", draw, false);
 	close.addEventListener("click", hide, false);
 	eraseAllButton.addEventListener("click", eraseAll, false);
 	eraseButton.addEventListener("click", toggleErase, false);
@@ -35,21 +36,21 @@ function onload() {
 	   "recaptcha",
     {
       theme: "clean",
-      //callback: Recaptcha.focus_response_field
+      // callback: Recaptcha.focus_response_field
     }
   );
 };
 
 function onloadSentence() {
-	can = $("myCanvas"); 
+	canvas = $("myCanvas"); 
 	eraseAllButton = $("eraseAllButton");
 	eraseButton = $("eraseButton");
 	submitPicButton = $("submitPicButton");
 	status = $("status");
-	ctx = can.getContext("2d");
+	context = canvas.getContext("2d");
 	close = $("close");
 	
-	can.addEventListener("mouseover", draw, false);
+	canvas.addEventListener("mouseover", draw, false);
 	close.addEventListener("click", hide, false);
 	eraseAllButton.addEventListener("click", eraseAll, false);
 	eraseButton.addEventListener("click", toggleErase, false);
@@ -67,35 +68,35 @@ function onloadPicture() {
 };
 
 function draw(e) {
-	setUpCanvas(can);
-	can.addEventListener("mousedown", mousedown, false);
-	can.addEventListener("mouseup", mouseup, false);
+	setUpCanvas(canvas);
+	canvas.addEventListener("mousedown", mousedown, false);
+	canvas.addEventListener("mouseup", mouseup, false);
 	
-	//Tries to prevent I-beam
+	// Tries to prevent I-beam
 	e.preventDefault();	
 };
 
-function setUpCanvas(can) {		
-	//console.log(erasing);
-	//console.log(can.style.cursor);
+function setUpCanvas(canvas) {		
+	// console.log(erasing);
+	// console.log(canvas.style.cursor);
 	if (!erasing) {
-		can.style.cursor = "crosshair";
+		canvas.style.cursor = "crosshair";
 	} else {
-		can.style.cursor = "url('/images/eraser.png') 10 10, auto";
+		canvas.style.cursor = "url('/images/eraser.png') 10 10, auto";
 	}
 };
 
 function mousedown(e) {
-	//Tries to prevent I-beam
+	// Tries to prevent I-beam
 	if (!e) var e = window.event;
 	e.preventDefault();	
 		
 	canDraw = true;
-	can.addEventListener("mousemove", mousemove, false);
+	canvas.addEventListener("mousemove", mousemove, false);
   
-	canX = e.pageX - can.offsetLeft;
-  canY = e.pageY - can.offsetTop;
-	ctx.fillRect(canX,canY,1,1);
+	canvasX = e.pageX - canvas.offsetLeft;
+  canvasY = e.pageY - canvas.offsetTop;
+	context.fillRect(canvasX,canvasY,1,1);
 
 };
 
@@ -105,36 +106,36 @@ function mouseup(e) {
 
 function mousemove(e) {
 	if (!e) var e = event;
-		canX = e.pageX - can.offsetLeft;
-    canY = e.pageY - can.offsetTop;
-    ctx.strokeStyle = canStyle;
-    ctx.lineWidth = canWidth;
-  if (canDraw && !started) {
-    ctx.beginPath();
-    ctx.moveTo(canX, canY);
-    started = true;
-	} else if (canDraw && started) {
-    ctx.lineTo(canX, canY);
-    ctx.stroke();
+		canvasX = e.pageX - canvas.offsetLeft;
+    canvasY = e.pageY - canvas.offsetTop;
+    context.strokeStyle = canvasStyle;
+    context.lineWidth = canvasWidth;
+  if (canDraw && !isDrawing) {
+    context.beginPath();
+    context.moveTo(canvasX, canvasY);
+    isDrawing = true;
+	} else if (canDraw && isDrawing) {
+    context.lineTo(canvasX, canvasY);
+    context.stroke();
   } else {
   canDraw = false;
-  started = false;
+  isDrawing = false;
   }
 };
 
 function eraseAll() {
-	ctx.clearRect(0,0,can.width,can.height);
+	context.clearRect(0, 0, canvas.width, canvas.height);
 };
 
 function toggleErase() {
 	erasing = !erasing;	
-	if (canStyle == "#000000") {
-		canStyle = "#FFFFFF";
-		canWidth = 20;
+	if (canvasStyle == "#000000") {
+		canvasStyle = "#FFFFFF";
+		canvasWidth = 20;
 		eraseButton.innerText = "Draw";
 	} else {
-		canStyle = "#000000";
-		canWidth = 2;
+		canvasStyle = "#000000";
+		canvasWidth = 2;
 		eraseButton.innerText = "Erase";
 	}
 };
@@ -145,7 +146,7 @@ function getparams() {
 	
 	for (var i = 0; i < url.length; i++) {
 		var parts = url[i].split("="); 
-		params[parts[0]]=parts[1];
+		params[parts[0]] = parts[1];
 	}
 	
 	return params;
@@ -153,7 +154,7 @@ function getparams() {
 };
 
 function submitFirstTurn(e) {
-  var img = can.toDataURL("image/png");
+  var img = canvas.toDataURL("image/png");
   var email = $("email").value.trim();
   var sentence = $("sentenceInput").value.trim();
   
@@ -217,19 +218,21 @@ function submitSentence() {
   sendRequest(
   	"/cgi-bin/game.rb", "POST", url,
   	function(response) {
-  	  $("status").innerText = "Sentence sent!";
+   	  var parsedResponse = JSON.parse(response);
+ 		  $("status").innerText = parsedResponse.message;
    	});
 };
 
 function submitPic() {
-  var img = can.toDataURL("image/png");
+  var img = canvas.toDataURL("image/png");
   var params = getparams();
   var url = "cmd=pic&data=" + encodeURIComponent(img) + "&gameid=" + params.gameid + "&turn=" + params.turn;
   
   sendRequest(
   	"/cgi-bin/game.rb", "POST", url,
    	function(response) {
-   		 $("status").innerText = "Picture sent!";
+   	  var parsedResponse = JSON.parse(response);
+ 		  $("status").innerText = parsedResponse.message;
    	});
 };
 
@@ -237,8 +240,8 @@ function validateSentence(sentence) {
 	if (sentence == "") {
   	$("status").innerText = "Missing input in the sentence field.";
   	return false;
-  } else if (sentence.length > 50) {
-    $("status").innerText = "Please limit your description to 50 characters or less."
+  } else if (sentence.length > 100) {
+    $("status").innerText = "Please limit your description to 100 characters or less."
    return false;
   }
   return true;
