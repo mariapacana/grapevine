@@ -6,15 +6,14 @@ var canvas;
 var context;
 var canvasX;
 var canvasY;
-var canvasStyle = "#000000";
-var canvasWidth = 2;
-var canDraw = false;
+var penStyle = "#000000";
+var penWidth = 2;
+var isDrawing = false;
 var erasing = false;
 var close;
 var eraseAllButton;
 var eraseButton;
 var submitButton;
-var isDrawing = false;
 
 function onload() {
 	canvas = $("myCanvas"); 
@@ -26,10 +25,19 @@ function onload() {
 	status = $("status");
 	context = canvas.getContext("2d");
 	
-	canvas.addEventListener("mouseover", draw, false);
+	// Sets up event listeners for drawing.
+  console.log(isDrawing);
+  canvas.addEventListener("mousedown", mousedown, false);
+	canvas.addEventListener("mouseup", mouseup, false);
+	canvas.addEventListener("mousemove", mousemove, false);
 	close.addEventListener("click", hide, false);
+	
+	// Sets up event listeners for erasing.
+	canvas.style.cursor = "crosshair";
 	eraseAllButton.addEventListener("click", eraseAll, false);
 	eraseButton.addEventListener("click", toggleErase, false);
+	
+	// Event listeners for submitting a first turn and for Recaptcha.
 	submitButton.addEventListener("click", submitFirstTurn, false);
 	
 	Recaptcha.create("6Le9XNYSAAAAAFxZ0cHVUx3_tC4PI1Tjvzhrg8pB",
@@ -50,7 +58,6 @@ function onloadSentence() {
 	context = canvas.getContext("2d");
 	close = $("close");
 	
-	canvas.addEventListener("mouseover", draw, false);
 	close.addEventListener("click", hide, false);
 	eraseAllButton.addEventListener("click", eraseAll, false);
 	eraseButton.addEventListener("click", toggleErase, false);
@@ -67,59 +74,36 @@ function onloadPicture() {
 	submitSentenceButton.addEventListener("click", submitSentence, false);
 };
 
-function draw(e) {
-	setUpCanvas(canvas);
-	canvas.addEventListener("mousedown", mousedown, false);
-	canvas.addEventListener("mouseup", mouseup, false);
-	
-	// Tries to prevent I-beam
-	e.preventDefault();	
-};
-
-function setUpCanvas(canvas) {		
-	// console.log(erasing);
-	// console.log(canvas.style.cursor);
-	if (!erasing) {
-		canvas.style.cursor = "crosshair";
-	} else {
-		canvas.style.cursor = "url('/images/eraser.png') 10 10, auto";
-	}
-};
-
 function mousedown(e) {
 	// Tries to prevent I-beam
 	if (!e) var e = window.event;
 	e.preventDefault();	
 		
-	canDraw = true;
-	canvas.addEventListener("mousemove", mousemove, false);
-  
+	isDrawing = true;
+  console.log(isDrawing);
 	canvasX = e.pageX - canvas.offsetLeft;
   canvasY = e.pageY - canvas.offsetTop;
-	context.fillRect(canvasX,canvasY,1,1);
+	context.beginPath();
+  context.moveTo(canvasX, canvasY);
 
 };
 
 function mouseup(e) {
-	canDraw = false;
+  context.closePath();
+	isDrawing = false;
+  console.log(isDrawing);
 };
 
 function mousemove(e) {
 	if (!e) var e = event;
 		canvasX = e.pageX - canvas.offsetLeft;
     canvasY = e.pageY - canvas.offsetTop;
-    context.strokeStyle = canvasStyle;
-    context.lineWidth = canvasWidth;
-  if (canDraw && !isDrawing) {
-    context.beginPath();
-    context.moveTo(canvasX, canvasY);
-    isDrawing = true;
-	} else if (canDraw && isDrawing) {
+    context.strokeStyle = penStyle;
+    context.lineWidth = penWidth;
+  if (isDrawing) {
     context.lineTo(canvasX, canvasY);
     context.stroke();
-  } else {
-  canDraw = false;
-  isDrawing = false;
+    console.log(isDrawing);
   }
 };
 
@@ -129,13 +113,15 @@ function eraseAll() {
 
 function toggleErase() {
 	erasing = !erasing;	
-	if (canvasStyle == "#000000") {
-		canvasStyle = "#FFFFFF";
-		canvasWidth = 20;
+	if (penStyle == "#000000") {
+		penStyle = "#FFFFFF";
+		penWidth = 20;
+		canvas.style.cursor = "url('/images/eraser.png') 10 10, auto";
 		eraseButton.innerText = "Draw";
 	} else {
-		canvasStyle = "#000000";
-		canvasWidth = 2;
+		penStyle = "#000000";
+		penWidth = 2;
+		canvas.style.cursor = "crosshair";
 		eraseButton.innerText = "Erase";
 	}
 };
