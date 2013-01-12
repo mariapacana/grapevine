@@ -10,7 +10,7 @@ var state = {
   penColor: "#000000"
 };
 
-// Initializes global state object.
+// Initializes global state object with important elements.
 function initState() {
   state.canvas = $("myCanvas"); 
 	state.close = $("close");
@@ -112,7 +112,7 @@ function eraseAll() {
 // Toggles between drawing and erasing (which is basically drawing with a white pen.)
 function toggleErase() {
 	erasing = !erasing;	
-	if (state.penColor == "#000000") {
+	if (erasing) {
 		state.penColor = "#FFFFFF";
 		state.penWidth = 20;
 		state.canvas.style.cursor = "url('/images/eraser.png') 10 10, auto";
@@ -125,7 +125,7 @@ function toggleErase() {
 	}
 };
 
-function getparams() {
+function getUrlParams() {
 	var url = window.location.search.substring(1).split("&");
 	var params = {};
 	
@@ -192,7 +192,7 @@ function submitFirstTurn(e) {
 };
 
 function submitSentence() {
-	var params = getparams();
+	var params = getUrlParams();
 	var url = "cmd=sentence&sentence="+encodeURIComponent($("sentenceInput").value)+"&gameid="+params.gameid+"&turn="+params.turn;
 	var sentence = $("sentenceInput").value.trim();
   
@@ -210,7 +210,7 @@ function submitSentence() {
 
 function submitPic() {
   var img = state.canvas.toDataURL("image/png");
-  var params = getparams();
+  var params = getUrlParams();
   var url = "cmd=pic&data=" + encodeURIComponent(img) + "&gameid=" + params.gameid + "&turn=" + params.turn;
   
   sendRequest(
