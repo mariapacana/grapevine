@@ -2,43 +2,45 @@
 // This borrows liberally from various Canvas tutorial sites, such as 
 // http://dev.opera.com/articles/view/html5-canvas-painting/.
 
-var canvas;
-var context;
-var canvasX;
-var canvasY;
-var penStyle = "#000000";
-var penWidth = 2;
-var isDrawing = false;
 var erasing = false;
-var close;
-var eraseAllButton;
-var eraseButton;
-var submitButton;
+var isDrawing = false;
 
+var state = {
+  penWidth: 2,
+  penColor: "#000000"
+};
+
+// Initializes global state object.
+function initState() {
+  state.canvas = $("myCanvas"); 
+	state.close = $("close");
+	state.context = state.canvas.getContext("2d");
+  state.eraseAllButton = $("eraseAllButton");
+  state.eraseButton = $("eraseButton");
+  state.picture = $("picture");
+	state.sentence = $("sentenceInput").value;
+  state.status = $("status");
+  state.submitButton = $("submitButton");
+};
+
+// Onload for main Grapevine page for first player.
 function onload() {
-	canvas = $("myCanvas"); 
-	eraseAllButton = $("eraseAllButton");
-	eraseButton = $("eraseButton");
-	submitButton = $("submitButton");
-	close = $("close");
-	picture = $("picture");
-	status = $("status");
-	context = canvas.getContext("2d");
-	
+  initState();
+
 	// Sets up event listeners for drawing.
   console.log(isDrawing);
-  canvas.addEventListener("mousedown", mousedown, false);
-	canvas.addEventListener("mouseup", mouseup, false);
-	canvas.addEventListener("mousemove", mousemove, false);
-	close.addEventListener("click", hide, false);
+  state.canvas.addEventListener("mousedown", mousedown, false);
+	state.canvas.addEventListener("mouseup", mouseup, false);
+	state.canvas.addEventListener("mousemove", mousemove, false);
+	state.close.addEventListener("click", hide, false);
 	
 	// Sets up event listeners for erasing.
-	canvas.style.cursor = "crosshair";
-	eraseAllButton.addEventListener("click", eraseAll, false);
-	eraseButton.addEventListener("click", toggleErase, false);
+	state.canvas.style.cursor = "crosshair";
+	state.eraseAllButton.addEventListener("click", eraseAll, false);
+	state.eraseButton.addEventListener("click", toggleErase, false);
 	
 	// Event listeners for submitting a first turn and for Recaptcha.
-	submitButton.addEventListener("click", submitFirstTurn, false);
+	state.submitButton.addEventListener("click", submitFirstTurn, false);
 	
 	Recaptcha.create("6Le9XNYSAAAAAFxZ0cHVUx3_tC4PI1Tjvzhrg8pB",
 	   "recaptcha",
@@ -49,80 +51,77 @@ function onload() {
   );
 };
 
+// Onload for even-numbered players who are submitting pictures.
 function onloadSentence() {
-	canvas = $("myCanvas"); 
-	eraseAllButton = $("eraseAllButton");
-	eraseButton = $("eraseButton");
-	submitPicButton = $("submitPicButton");
-	status = $("status");
-	context = canvas.getContext("2d");
-	close = $("close");
-	
-	close.addEventListener("click", hide, false);
-	eraseAllButton.addEventListener("click", eraseAll, false);
-	eraseButton.addEventListener("click", toggleErase, false);
-	submitPicButton.addEventListener("click", submitPic, false);
+  initState();
+
+	state.close.addEventListener("click", hide, false);
+	state.eraseAllButton.addEventListener("click", eraseAll, false);
+	state.eraseButton.addEventListener("click", toggleErase, false);
+	state.submitButton.addEventListener("click", submitPic, false);
 };
 
+// Onload for even-numbered players who are submitting sentences.
 function onloadPicture() {
-	submitSentenceButton = $("submitSentenceButton");
-	sentence = $("sentenceInput").value;
-	status = $("status");
-	close = $("close");
+  initState();
 	
-	close.addEventListener("click", hide, false);
-	submitSentenceButton.addEventListener("click", submitSentence, false);
+	state.close.addEventListener("click", hide, false);
+	state.submitButton.addEventListener("click", submitSentence, false);
 };
 
+// Begins to draw a path on mousedown.
 function mousedown(e) {
-	// Tries to prevent I-beam
 	if (!e) var e = window.event;
-	e.preventDefault();	
+	e.preventDefault();		// Tries to prevent I-beam
 		
 	isDrawing = true;
   console.log(isDrawing);
-	canvasX = e.pageX - canvas.offsetLeft;
-  canvasY = e.pageY - canvas.offsetTop;
-	context.beginPath();
-  context.moveTo(canvasX, canvasY);
+	state.canvasX = e.pageX - state.canvas.offsetLeft;
+  state.canvasY = e.pageY - state.canvas.offsetTop;
+	state.context.beginPath();
+  state.context.moveTo(state.canvasX, state.canvasY);
 
 };
 
+// Closes path on mouseup.
 function mouseup(e) {
-  context.closePath();
+  state.context.closePath();
 	isDrawing = false;
   console.log(isDrawing);
 };
 
+// Draws the path as mouse moves.
 function mousemove(e) {
 	if (!e) var e = event;
-		canvasX = e.pageX - canvas.offsetLeft;
-    canvasY = e.pageY - canvas.offsetTop;
-    context.strokeStyle = penStyle;
-    context.lineWidth = penWidth;
+		state.canvasX = e.pageX - state.canvas.offsetLeft;
+    state.canvasY = e.pageY - state.canvas.offsetTop;
+    state.context.strokeStyle = state.penColor;
+    state.context.lineWidth = state.penWidth;
   if (isDrawing) {
-    context.lineTo(canvasX, canvasY);
-    context.stroke();
+    state.context.lineTo(state.canvasX, state.canvasY);
+    state.context.stroke();
     console.log(isDrawing);
   }
 };
 
+// Erases entire canvas.
 function eraseAll() {
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	state.context.clearRect(0, 0, state.canvas.width, state.canvas.height);
 };
 
+// Toggles between drawing and erasing (which is basically drawing with a white pen.)
 function toggleErase() {
 	erasing = !erasing;	
-	if (penStyle == "#000000") {
-		penStyle = "#FFFFFF";
-		penWidth = 20;
-		canvas.style.cursor = "url('/images/eraser.png') 10 10, auto";
+	if (state.penColor == "#000000") {
+		state.penColor = "#FFFFFF";
+		state.penWidth = 20;
+		state.canvas.style.cursor = "url('/images/eraser.png') 10 10, auto";
 		eraseButton.innerText = "Draw";
 	} else {
-		penStyle = "#000000";
-		penWidth = 2;
-		canvas.style.cursor = "crosshair";
-		eraseButton.innerText = "Erase";
+		state.penColor = "#000000";
+		state.penWidth = 2;
+		state.canvas.style.cursor = "crosshair";
+		state.eraseButton.innerText = "Erase";
 	}
 };
 
@@ -140,7 +139,7 @@ function getparams() {
 };
 
 function submitFirstTurn(e) {
-  var img = canvas.toDataURL("image/png");
+  var img = state.canvas.toDataURL("image/png");
   var email = $("email").value.trim();
   var sentence = $("sentenceInput").value.trim();
   
@@ -210,7 +209,7 @@ function submitSentence() {
 };
 
 function submitPic() {
-  var img = canvas.toDataURL("image/png");
+  var img = state.canvas.toDataURL("image/png");
   var params = getparams();
   var url = "cmd=pic&data=" + encodeURIComponent(img) + "&gameid=" + params.gameid + "&turn=" + params.turn;
   
@@ -232,4 +231,3 @@ function validateSentence(sentence) {
   }
   return true;
 };
-
