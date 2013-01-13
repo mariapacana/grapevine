@@ -60,6 +60,7 @@ function setUpTurn() {
   state.canvas.addEventListener("mousedown", mousedown, false);
 	state.canvas.addEventListener("mouseup", mouseup, false);
 	state.canvas.addEventListener("mousemove", mousemove, false);
+	state.canvas.addEventListener("mouseout", mouseout, false);
 	
 	// Sets up event listeners for erasing.
 	state.canvas.style.cursor = "crosshair";
@@ -98,7 +99,13 @@ function mousedown(e) {
   state.canvasY = e.pageY - state.canvas.offsetTop;
 	state.context.beginPath();
   state.context.moveTo(state.canvasX, state.canvasY);
+};
 
+// Closes existing path when mouse is moved off the canvas.
+function mouseout(e) {
+  state.context.closePath();
+  isDrawing = false;
+  console.log(isDrawing);
 };
 
 // Closes path on mouseup.
