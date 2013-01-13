@@ -28,7 +28,6 @@ function initState(hasPicture, hasSentence) {
 		state.sentence = $("sentenceInput").value;
 		state.submitSentenceButton = $("submitSentenceButton");
 	}
-  
 };
 
 // Onload for main Grapevine page for first player.
@@ -58,9 +57,9 @@ function setUpTurn() {
 	// Sets up event listeners for drawing.
   console.log(isDrawing);
   state.canvas.addEventListener("mousedown", mousedown, false);
-	state.canvas.addEventListener("mouseup", mouseup, false);
+	state.canvas.addEventListener("mouseup", mouseoff, false);
 	state.canvas.addEventListener("mousemove", mousemove, false);
-	state.canvas.addEventListener("mouseout", mouseout, false);
+	state.canvas.addEventListener("mouseout", mouseoff, false);
 	
 	// Sets up event listeners for erasing.
 	state.canvas.style.cursor = "crosshair";
@@ -102,16 +101,9 @@ function mousedown(e) {
 };
 
 // Closes existing path when mouse is moved off the canvas.
-function mouseout(e) {
+function mouseoff(e) {
   state.context.closePath();
   isDrawing = false;
-  console.log(isDrawing);
-};
-
-// Closes path on mouseup.
-function mouseup(e) {
-  state.context.closePath();
-	isDrawing = false;
   console.log(isDrawing);
 };
 
