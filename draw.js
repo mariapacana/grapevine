@@ -11,33 +11,33 @@ var state = {
 };
 
 // Initializes global state object with important elements.
-function initState() {
-  state.canvas = $("myCanvas"); 
-	state.close = $("close");
-	state.context = state.canvas.getContext("2d");
-  state.eraseAllButton = $("eraseAllButton");
-  state.eraseButton = $("eraseButton");
-  state.picture = $("picture");
-	state.sentence = $("sentenceInput").value;
+function initState(hasPicture, hasSentence) {
+  state.close = $("close");
   state.status = $("status");
   state.submitButton = $("submitButton");
+
+  if (hasPicture) {
+    state.canvas = $("myCanvas"); 
+	  state.context = state.canvas.getContext("2d");
+    state.eraseAllButton = $("eraseAllButton");
+    state.eraseButton = $("eraseButton");
+    state.picture = $("picture");
+  }
+  
+	if (hasSentence) {
+		state.sentence = $("sentenceInput").value;
+		state.submitSentenceButton = $("submitSentenceButton");
+	}
+  
 };
 
 // Onload for main Grapevine page for first player.
 function onload() {
-  initState();
-
-	// Sets up event listeners for drawing.
-  console.log(isDrawing);
-  state.canvas.addEventListener("mousedown", mousedown, false);
-	state.canvas.addEventListener("mouseup", mouseup, false);
-	state.canvas.addEventListener("mousemove", mousemove, false);
-	state.close.addEventListener("click", hide, false);
-	
-	// Sets up event listeners for erasing.
-	state.canvas.style.cursor = "crosshair";
-	state.eraseAllButton.addEventListener("click", eraseAll, false);
-	state.eraseButton.addEventListener("click", toggleErase, false);
+  var hasPicture = true;
+  var hasSentence = true;
+  
+  initState(hasPicture, hasSentence);
+	setUpTurn();
 	
 	// Event listeners for submitting a first turn and for Recaptcha.
 	state.submitButton.addEventListener("click", submitFirstTurn, false);
@@ -51,22 +51,40 @@ function onload() {
   );
 };
 
-// Onload for even-numbered players who are submitting pictures.
-function onloadSentence() {
-  initState();
-
+function setUpTurn() {
+  // Will close the "How To" div.
 	state.close.addEventListener("click", hide, false);
+	
+	// Sets up event listeners for drawing.
+  console.log(isDrawing);
+  state.canvas.addEventListener("mousedown", mousedown, false);
+	state.canvas.addEventListener("mouseup", mouseup, false);
+	state.canvas.addEventListener("mousemove", mousemove, false);
+	
+	// Sets up event listeners for erasing.
+	state.canvas.style.cursor = "crosshair";
 	state.eraseAllButton.addEventListener("click", eraseAll, false);
 	state.eraseButton.addEventListener("click", toggleErase, false);
+};
+
+// Onload for even-numbered players who are submitting pictures.
+function onloadSentence() {
+  var hasPicture = true;
+  var hasSentence = false;
+  initState(hasPicture, hasSentence);
+  setUpTurn();
+
 	state.submitButton.addEventListener("click", submitPic, false);
 };
 
 // Onload for even-numbered players who are submitting sentences.
 function onloadPicture() {
-  initState();
+  var hasPicture = false;
+  var hasSentence = true;
+  initState(hasPicture, hasSentence);
 	
 	state.close.addEventListener("click", hide, false);
-	state.submitButton.addEventListener("click", submitSentence, false);
+	state.submitSentenceButton.addEventListener("click", submitSentence, false);
 };
 
 // Begins to draw a path on mousedown.
@@ -138,33 +156,39 @@ function getUrlParams() {
 	
 };
 
+// First player submits their turn, consisting of canvas data, sentence data, and recaptcha response.
 function submitFirstTurn(e) {
   var img = state.canvas.toDataURL("image/png");
   var email = $("email").value.trim();
   var sentence = $("sentenceInput").value.trim();
   
+  // Validates sentence content.
   if (!validateSentence(sentence)) {
   	return;
   } 
 	
+	// Separates emails by commas or by spaces. (Would be nice to allow a mix.)
 	if (email.match(/,/)) {
-   	email = email.split(/,/);
+   	email = email.split(/\s*,\s*/);
   } else {
-  	email = email.split(/ /);
+  	email = email.split(/\s+/);
   }
   
+  // Validates email input.
 	for (var i = 0; i < email.length; i++) {
-		if (!email[i].match(/.*@.*\..*/) || email[i].length == 0) {
+		if (!email[i].match(/.+@.+\..+/) || email[i].length == 0) {
 		$("status").innerText = "Please enter valid email addresses.";
     return;
     }
 	}	
 	
+	// Verifying the Recaptcha.
 	var recaptchaChallenge = Recaptcha.get_challenge();
 	var recaptchaResponse = Recaptcha.get_response();
   
+  // Sending pic, sentence, email, & Recaptcha data to server.
   sendRequest("/cgi-bin/game.rb", "POST", 
-  		        "cmd=create&data=" + encodeURIComponent(img) +   //encodeURI changes spaces, &&s, etc.
+  		        "cmd=create&data=" + encodeURIComponent(img) +   
   		        "&sentence=" + encodeURIComponent(sentence) + 
   		        "&email=" + encodeURIComponent($("email").value) +
   		        "&challenge=" + encodeURIComponent(recaptchaChallenge) +
@@ -191,6 +215,7 @@ function submitFirstTurn(e) {
   	});
 };
 
+// Submits a sentence to the server.
 function submitSentence() {
 	var params = getUrlParams();
 	var url = "cmd=sentence&sentence="+encodeURIComponent($("sentenceInput").value)+"&gameid="+params.gameid+"&turn="+params.turn;
@@ -208,6 +233,7 @@ function submitSentence() {
    	});
 };
 
+// Submits a pic to the server.
 function submitPic() {
   var img = state.canvas.toDataURL("image/png");
   var params = getUrlParams();
@@ -221,6 +247,7 @@ function submitPic() {
    	});
 };
 
+// Checks that player wrote a sentence and that the sentence is valid.
 function validateSentence(sentence) {
 	if (sentence == "") {
   	$("status").innerText = "Missing input in the sentence field.";
