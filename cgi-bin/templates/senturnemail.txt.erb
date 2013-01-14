@@ -1,4 +1,8 @@
-Hi there! Your friend <%= current_email %> sent you a drawing through Grapevine, the game where you have fun with words and sketches. 
+From: <%= $standard_email %>
+To: <%= next_email %>
+Subject: Your turn to play Grapevine
+
+Hi there! Your friend <%= current_email %> sent you a drawing through Grapevine, a game where you have fun with words and sketches. 
 
 Click the link here to play: http://localhost:8000/cgi-bin/game.rb?cmd=show&gameid=<%= gameid %>&turn=<%= turn %>&token=<%= current_token %>
 

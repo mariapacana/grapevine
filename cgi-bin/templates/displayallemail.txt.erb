@@ -1,4 +1,8 @@
-Hi there! <% if player_emails.length > 2 %> <% i=0 %><% while i < player_emails.length-1 %><%= player_emails[i] %>, <% i+=1 %><% end %>and <%= player_emails [player_emails.length - 1] %> have been playing Grapevine, the game where you have fun with words and sketches. 
-<% elsif player_emails.length == 2 %> <%= player_emails[0] %> and <%= player_emails[1] %> have been playing Grapevine, the game where you have fun with words and sketches. 
+From: <%= $standard_email %>
+To: <% i=0 %><% while i < player_emails.length-1 %><%= player_emails[i] %>, <% i+=1 %><% end %><%= player_emails [player_emails.length - 1] %>
+Subject: Your Grapevine game!
+
+Hi there! <% if player_emails.length > 2 %> <% i=0 %><% while i < player_emails.length-1 %><%= player_emails[i] %>, <% i+=1 %><% end %>and <%= player_emails [player_emails.length - 1] %> have been playing Grapevine.
+<% elsif player_emails.length == 2 %> <%= player_emails[0] %> and <%= player_emails[1] %> have been playing Grapevine.
 <% else %> <%= player_emails[0] %> has been playing Grapevine, the game where you have fun with words and sketches. <% end %>
 Click the link here to see the entire game: http://localhost:8000/cgi-bin/game.rb?cmd=displayall&gameid=<%= gameid %>&token=<%= token %>

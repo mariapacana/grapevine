@@ -176,8 +176,8 @@ function submitFirstTurn(e) {
   // Validates email input.
 	for (var i = 0; i < email.length; i++) {
 		if (!email[i].match(/.+@.+\..+/) || email[i].length == 0) {
-		$("status").innerText = "Please enter valid email addresses.";
-    return;
+	  	$("status").innerText = "Please enter valid email addresses.";
+      return;
     }
 	}	
 	
@@ -194,21 +194,10 @@ function submitFirstTurn(e) {
   		        "&response=" + encodeURIComponent(recaptchaResponse),
    	function(response) {
    	  var parsedResponse = JSON.parse(response);
-   	 	
+	 		$("status").innerText = parsedResponse.message;   	 	
 		 	if (!parsedResponse.success) {
-	 			switch (parsedResponse.message) {
-	 				case "incorrect-captcha-sol": 
-	 					$("status").innerText = "Invalid CAPTCHA answer, try again.";
-	 					break;
-	 				case "invalid-request-cookie":
-	 					$("status").innerText = "The challenge parameter of the verify script was incorrect."; 
-	 					break;
-	 				default:
-	 					$("status").innerText = "Failed to check CAPTCHA (" + parsedResponse.message + "). Sorry, please try again."; 
-	 			}	
 	 			Recaptcha.reload();
 		 	} else {
-		 	 	$("status").innerText = "Turn successfully submitted!";
 		 	 	Recaptcha.destroy();
 		 	}
   	});

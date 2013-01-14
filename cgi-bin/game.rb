@@ -27,20 +27,23 @@ CREATE INDEX gameid_p ON pics (gameid);
 CREATE INDEX gameid_s ON sentences (gameid);
 =end
 
+$really_send_email = false
+$standard_email = "info@grapevine-game.com"
+$sendmail = "/usr/bin/sendmail"
 $cgi = CGI.new
 $params = $cgi.params
-DB_FILENAME = "picdata.db"
 
-def error(message) # broken; sends 200 rather than 400
-  $cgi.out({"Status" => "400 Bad Request"}) { message }
-  exit
-end
+DB_FILENAME = "picdata.db"
 
 # Outputs a response as a JSON object.
 # 'success' is true or false.
 # 'message' is a string containing additional details.
 def send_response(success, message)
-  $cgi.out("text/plain") { {"success" => success, "message" => message}.to_json } # Converts hash to JSON.
+  $cgi.out("text/plain") do
+    { "success" => success,
+      "message" => message,
+    }.to_json
+  end  # Converts hash to JSON.
 end
 
 # Creates a new game.
@@ -90,18 +93,17 @@ def create_game(data, email, sentence, time)
   gameid
 end
 
+# Displays all of the turns of a game in a single page.
 def displayall(gameid,token)
-
   db = SQLite3::Database.new(DB_FILENAME)
-  maxturns = db.execute("select max(turn) from gamestoplayers where gameid=?",gameid)[0][0]
-  last_played = db.execute("select time from gamestoplayers where gameid=? and turn = ?",[gameid, maxturns])[0][0]
+  maxturns = db.execute("select max(turn) from gamestoplayers where gameid=?", gameid)[0][0]
+  last_played = db.execute("select time from gamestoplayers where gameid=? and turn = ?", [gameid, maxturns])[0][0]
   correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = 1", gameid)[0][0]
 
   if (token == correct_token) && (last_played > 0) 
     turndata = []
     
-    #Gets an array of arrays. Still don't understand left join. 
-    #IFNULL(s.sentence, pi.data) doesn't work because of first player.
+    # Gets all player data (turn #, emails, sentences, etc) for a particular game.
     turndata = db.execute("SELECT gtp.turn, pl.email, pi.data, s.sentence
       FROM gamestoplayers gtp INNER JOIN players pl ON(gtp.playerid = pl.playerid)
       LEFT JOIN pics pi ON(gtp.gameid = pi.gameid AND gtp.turn = pi.turn)
@@ -118,19 +120,20 @@ def displayall(gameid,token)
   $cgi.out() { template.result(binding) }
 end
 
+# Shows a previous player's turn to the current player.
 def show(gameid,turn,token)
   db = SQLite3::Database.new(DB_FILENAME)
-  correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
+  correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid, turn])[0][0]
 
   if (token == correct_token)
-    #shows sentences
+    # Shows sentences
     if turn.even? 
-      sentence = db.execute("select sentence from sentences where gameid = ? and turn = ?", [gameid,turn-1])[0][0]
+      sentence = db.execute("select sentence from sentences where gameid = ? and turn = ?", [gameid, turn-1])[0][0]
       template_data = IO.read('cgi-bin/templates/senturn.html.erb')
       template = ERB.new(template_data)
-    #shows pics
+    # Shows pics
     else 
-      picdata = db.execute("select data from pics where gameid = ? and turn = ?", [gameid,turn-1])[0][0]
+      picdata = db.execute("select data from pics where gameid = ? and turn = ?", [gameid, turn-1])[0][0]
       template_data = IO.read('cgi-bin/templates/picturn.html.erb')
       template = ERB.new(template_data)
     end
@@ -141,9 +144,10 @@ def show(gameid,turn,token)
   $cgi.out() { template.result(binding) }
 end
 
+# Sends email to the next player containing a link to the previous turn's data.
 def send_email(gameid,turn)
   db = SQLite3::Database.new(DB_FILENAME)
-  maxturns = db.execute("select max(turn) from gamestoplayers where gameid=?",gameid)[0][0]
+  maxturns = db.execute("select max(turn) from gamestoplayers where gameid=?", gameid)[0][0]
   email_message = ''
 
   # Looks up game and turn to find next player and turn type.
@@ -152,19 +156,19 @@ def send_email(gameid,turn)
   if (turn == maxturns + 1) 
     player_emails = []
     player_ids = db.execute("select playerid from gamestoplayers where gameid = ? and active = 1", gameid)
-    player_ids.each {|i| player_emails << db.execute("select email from players where playerid = ?",i[0])[0][0] }
+    player_ids.each {|i| player_emails << db.execute("select email from players where playerid = ?", i[0])[0][0] }
     token = db.execute("select token from gamestoplayers where gameid = ? and turn = 1", gameid)[0][0]
 
     template_data = IO.read('cgi-bin/templates/displayallemail.txt.erb')
     template = ERB.new(template_data)
     email_message = template.result(binding)
   else
-    current_playerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid,turn-1])[0][0]
-    next_playerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
+    current_playerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid, turn-1])[0][0]
+    next_playerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid, turn])[0][0]
     current_email = db.execute("select email from players where playerid = ?", current_playerid)[0][0]
     next_email = db.execute("select email from players where playerid = ?", next_playerid)[0][0]
     next_optout_token = db.execute("select optout_token from players where playerid = ?", next_playerid)[0][0]
-    current_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid,turn])[0][0]
+    current_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid, turn])[0][0]
     if turn.odd?
 	    template_data = IO.read('cgi-bin/templates/senturnemail.txt.erb')
     else
@@ -174,17 +178,23 @@ def send_email(gameid,turn)
     email_message = template.result(binding)
   end
   
-  #What about potentially many messages?
-  File.open('sentemail.txt', 'w') do |file|
-  file.puts email_message
+  # Sends the email.
+  if $really_send_email
+    IO.popen($sendmail, 'w') do |file|
+      file.puts email_message
+    end
+  else
+    File.open('sentemail.txt', 'w') do |file|
+      file.puts email_message
+    end
   end
-# create tmail message
 end
 
+# Saves sentence data in odd-numbered turns.
 def savesentence(sentence,gameid,turn,time)
   db = SQLite3::Database.new(DB_FILENAME)
 
-  if (db.execute("select sentence from sentences where gameid = ? and turn = ?", [gameid,turn])[0] == nil) 
+  if (db.execute("select sentence from sentences where gameid = ? and turn = ?", [gameid, turn])[0] == nil) 
     db.transaction do |db|
       db.execute("insert into sentences (sentence, gameid, turn) values (?,?,?)", [sentence, gameid, turn]) 
       db.execute("update gamestoplayers set time = ? where gameid = ? and turn = ?", [time, gameid, turn])
@@ -196,9 +206,10 @@ def savesentence(sentence,gameid,turn,time)
   end
 end
 
+# Saves pic data in even-numbered turns.
 def savepic(data,gameid,turn,time)
   db = SQLite3::Database.new(DB_FILENAME)
-  if (db.execute("select data from pics where gameid = ? and turn = ?", [gameid,turn])[0] == nil) 
+  if (db.execute("select data from pics where gameid = ? and turn = ?", [gameid, turn])[0] == nil) 
     db.transaction do |db|
       db.execute("insert into pics (data, gameid, turn) values (?,?,?)", [data, gameid, turn]) 
       db.execute("update gamestoplayers set time = ? where gameid = ? and turn = ?",[time, gameid, turn])
@@ -210,13 +221,12 @@ def savepic(data,gameid,turn,time)
   end
 end
 
-# Function will do the following:
-# - make inactive all turns of games player is involved in
-# - set optedout for each player to 0
+# This function makes inactive all turns of games that a player is involved in, and skips to the next player.
+# It sets optedout for each player to 1.
 def optout(playerid, optout_token)
   db = SQLite3::Database.new(DB_FILENAME)
 
-  games = db.execute("select gameid from gamestoplayers where playerid = ? and time = ?", [playerid,0]).flatten
+  games = db.execute("select gameid from gamestoplayers where playerid = ? and time = ?", [playerid, 0]).flatten
   db.execute("update players set optedout = 1 where playerid = ? and optout_token = ?", [playerid, optout_token])
   
   gamesturns = [] # For debugging.
@@ -224,7 +234,7 @@ def optout(playerid, optout_token)
   for gameid in games
     turn = nil
     db.transaction do |db|
-      turn = db.execute("select turn from gamestoplayers where gameid = ? and playerid = ? and time = ?", [gameid, playerid,0])[0][0]
+      turn = db.execute("select turn from gamestoplayers where gameid = ? and playerid = ? and time = ?", [gameid, playerid, 0])[0][0]
       db.execute("update gamestoplayers set active = 0 where gameid = ? and playerid = ? and time = ?", [gameid, playerid, 0])
       db.execute("update gamestoplayers set turn = 0 where gameid = ? and playerid = ? and time = ?", [gameid, playerid, 0])
       db.execute("update gamestoplayers set turn = turn - 1 where gameid = ? and turn > ?", [gameid, turn])
@@ -237,7 +247,10 @@ def optout(playerid, optout_token)
   template_data = IO.read('cgi-bin/templates/optedout.html.erb')
   template = ERB.new(template_data)
   $cgi.out() { template.result(binding) }
- 
+end
+
+def email_address_valid?(address)
+  address =~ /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
 end
 
 def main
@@ -247,7 +260,7 @@ def main
     cmd = $params["cmd"][0]
 
   if (cmd == "create") # Creates a new game
-    data = URI.unescape($params["data"][0]).to_s # changes &&s for instance
+    data = URI.unescape($params["data"][0]).to_s 
     sentence = URI.unescape($params["sentence"][0])
     email = URI.unescape($params["email"][0])
     challenge = $params["challenge"][0]
@@ -267,13 +280,17 @@ def main
 
     # If returns HTTP error code, sends status in reply as a JSON object
     if r.code != '200' 			
-      send_response(false, "http-" + r.code)
-    return
+      send_response(false, "Recaptcha request returned code #{r.code}.")
+      return
     end
 
     lines = r.body.split("\n")
-    if lines[0] != "true" 
-      send_response(false, lines[1])
+    if lines[0] != "true"
+      message = case lines[1] 
+        when "incorrect-captcha-sol" then "Invalid CAPTCHA answer; try again."
+        else "Recaptcha returned an error (#{lines[1]})."
+      end
+      send_response(false, message)
       return
     else
       if (email.include? ",") 
@@ -281,11 +298,15 @@ def main
       else
         email = email.split(" ")
       end				
-      email.each {|i| i.strip! }
+      email.each {|e| e.strip! }
+      if email.find {|e| !email_address_valid?(e) }
+        send_response(false, "Invalid email address #{e}.")
+        return
+      end
 
       gameid = create_game(data, email, sentence, time)	
       send_email(gameid, 2)
-      send_response(true, lines[1])
+      send_response(true, "Game successfully created!")
     end	
   elsif (cmd == "show") # Shows the current turn, but only to someone who has the token!
     gameid = $params["gameid"][0]
