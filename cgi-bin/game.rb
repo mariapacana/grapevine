@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 # Copyright Maria Pacana 2013. All rights reserved.
 
+$nfs = false
+
+require "rubygems" if $nfs
 require "cgi"
 require "erb"
 require "json"
@@ -33,7 +36,15 @@ $sendmail = "/usr/bin/sendmail"
 $cgi = CGI.new
 $params = $cgi.params
 
-DB_FILENAME = "data/picdata.db"
+if $nfs
+  DB_FILENAME = "../data/picdata.db"
+  $template_path = "templates/"
+  $page_path = "http://www.grapevine-game.com/cgi-bin/"
+else
+  DB_FILENAME = "data/picdata.db"
+  $template_path = "cgi-bin/templates/"
+  $page_path = "http://localhost:8000/cgi-bin/"
+end
 
 # Outputs a response as a JSON object.
 # 'success' is true or false.
@@ -69,7 +80,7 @@ def create_game(data, email, sentence, time)
     r = db.execute("select playerid from players where email = ?",e)
 
     if !r.empty?
-      playerid = r[0][0]
+      playerid = r[0][0].to_i
     else
       optout_token = rand(2**31)
       db.execute("insert into players (email, optedout, optout_token) values (?, 0, ?)", [e, optout_token])
@@ -77,13 +88,13 @@ def create_game(data, email, sentence, time)
     end
 
     # Inserts player information if (1) it's player's first turn and (2) players are not opted out.
-    optedout = db.execute("select optedout from players where email = ?",e)[0][0]
-    if (turn == 1) 
+    optedout = db.execute("select optedout from players where email = ?",e)[0][0].to_i
+    if turn == 1
       params = [gameid, playerid, turn, token, time]
       db.execute("insert into gamestoplayers (gameid, playerid, turn, active, token, time) values (?, ?, ?, 1, ?, ?)", params) 
       turn +=1
     else
-      if (optedout == 0) then
+      if optedout == 0
         params = [gameid, playerid, turn, token]
         db.execute("insert into gamestoplayers (gameid, playerid, turn, active, token, time) values (?, ?, ?, 1, ?, 0)", params) 
         turn +=1
@@ -94,11 +105,11 @@ def create_game(data, email, sentence, time)
 end
 
 # Displays all of the turns of a game in a single page.
-def displayall(gameid,token)
+def displayall(gameid, token)
   db = SQLite3::Database.new(DB_FILENAME)
-  maxturns = db.execute("select max(turn) from gamestoplayers where gameid=?", gameid)[0][0]
-  last_played = db.execute("select time from gamestoplayers where gameid=? and turn = ?", [gameid, maxturns])[0][0]
-  correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = 1", gameid)[0][0]
+  maxturns = db.execute("select max(turn) from gamestoplayers where gameid=?", gameid)[0][0].to_i
+  last_played = db.execute("select time from gamestoplayers where gameid=? and turn = ?", [gameid, maxturns])[0][0].to_i
+  correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = 1", gameid)[0][0].to_i
 
   if (token == correct_token) && (last_played > 0) 
     turndata = []
@@ -111,10 +122,10 @@ def displayall(gameid,token)
       WHERE gtp.gameid = ?
       AND gtp.turn > 0
       ORDER BY gtp.turn ASC", gameid) 
-    template_data = IO.read('cgi-bin/templates/displayall.html.erb')
+    template_data = IO.read($template_path + 'displayall.html.erb')
     template = ERB.new(template_data)
   else
-    template_data = IO.read('cgi-bin/templates/wrongtoken.html.erb')
+    template_data = IO.read($template_path + 'wrongtoken.html.erb')
     template = ERB.new(template_data)
   end
   $cgi.out() { template.result(binding) }
@@ -123,22 +134,22 @@ end
 # Shows a previous player's turn to the current player.
 def show(gameid,turn,token)
   db = SQLite3::Database.new(DB_FILENAME)
-  correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid, turn])[0][0]
+  correct_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid, turn])[0][0].to_i
 
   if (token == correct_token)
     # Shows sentences
     if turn.even? 
       sentence = db.execute("select sentence from sentences where gameid = ? and turn = ?", [gameid, turn-1])[0][0]
-      template_data = IO.read('cgi-bin/templates/senturn.html.erb')
+      template_data = IO.read($template_path +'senturn.html.erb')
       template = ERB.new(template_data)
     # Shows pics
     else 
       picdata = db.execute("select data from pics where gameid = ? and turn = ?", [gameid, turn-1])[0][0]
-      template_data = IO.read('cgi-bin/templates/picturn.html.erb')
+      template_data = IO.read($template_path + 'picturn.html.erb')
       template = ERB.new(template_data)
     end
   else
-    template_data = IO.read('cgi-bin/templates/wrongtoken.html.erb')
+    template_data = IO.read($template_path + 'wrongtoken.html.erb')
     template = ERB.new(template_data)
   end
   $cgi.out() { template.result(binding) }
@@ -147,7 +158,7 @@ end
 # Sends email to the next player containing a link to the previous turn's data.
 def send_email(gameid,turn)
   db = SQLite3::Database.new(DB_FILENAME)
-  maxturns = db.execute("select max(turn) from gamestoplayers where gameid=?", gameid)[0][0]
+  maxturns = db.execute("select max(turn) from gamestoplayers where gameid=?", gameid)[0][0].to_i
   email_message = ''
 
   # Looks up game and turn to find next player and turn type.
@@ -156,23 +167,23 @@ def send_email(gameid,turn)
   if (turn == maxturns + 1) 
     player_emails = []
     player_ids = db.execute("select playerid from gamestoplayers where gameid = ? and active = 1", gameid)
-    player_ids.each {|i| player_emails << db.execute("select email from players where playerid = ?", i[0])[0][0] }
-    token = db.execute("select token from gamestoplayers where gameid = ? and turn = 1", gameid)[0][0]
+    player_ids.each {|i| player_emails << db.execute("select email from players where playerid = ?", i[0].to_i)[0][0] }
+    token = db.execute("select token from gamestoplayers where gameid = ? and turn = 1", gameid)[0][0].to_i
 
-    template_data = IO.read('cgi-bin/templates/displayallemail.txt.erb')
+    template_data = IO.read($template_path + 'displayallemail.txt.erb')
     template = ERB.new(template_data)
     email_message = template.result(binding)
   else
-    current_playerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid, turn-1])[0][0]
-    next_playerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid, turn])[0][0]
+    current_playerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid, turn-1])[0][0].to_i
+    next_playerid = db.execute("select playerid from gamestoplayers where gameid = ? and turn = ?", [gameid, turn])[0][0].to_i
     current_email = db.execute("select email from players where playerid = ?", current_playerid)[0][0]
     next_email = db.execute("select email from players where playerid = ?", next_playerid)[0][0]
-    next_optout_token = db.execute("select optout_token from players where playerid = ?", next_playerid)[0][0]
-    current_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid, turn])[0][0]
+    next_optout_token = db.execute("select optout_token from players where playerid = ?", next_playerid)[0][0].to_i
+    current_token = db.execute("select token from gamestoplayers where gameid = ? and turn = ?", [gameid, turn])[0][0].to_i
     if turn.odd?
-	    template_data = IO.read('cgi-bin/templates/senturnemail.txt.erb')
+	    template_data = IO.read($template_path + 'senturnemail.txt.erb')
     else
-	    template_data = IO.read('cgi-bin/templates/picturnemail.txt.erb')
+	    template_data = IO.read($template_path + 'picturnemail.txt.erb')
     end
     template = ERB.new(template_data)
     email_message = template.result(binding)
@@ -183,13 +194,14 @@ def send_email(gameid,turn)
   if $really_send_email
     if (turn == maxturns + 1)
       player_emails.each do |i|
-        IO.popen($sendmail i, 'w') do |file|
+        IO.popen("$sendmail #{i}", 'w') do |file|
           file.puts email_message
         end
       end
     else
-      IO.popen($sendmail next_email, 'w') do |file|
-      file.puts email_message
+      IO.popen("$sendmail #{next_email}", 'w') do |file|
+        file.puts email_message
+      end
     end
   else
     File.open('sentemail.txt', 'w') do |file|
@@ -234,7 +246,7 @@ end
 def optout(playerid, optout_token)
   db = SQLite3::Database.new(DB_FILENAME)
 
-  games = db.execute("select gameid from gamestoplayers where playerid = ? and time = ?", [playerid, 0]).flatten
+  games = db.execute("select gameid from gamestoplayers where playerid = ? and time = ?", [playerid, 0]).flatten.map {|g| g.to_i }
   db.execute("update players set optedout = 1 where playerid = ? and optout_token = ?", [playerid, optout_token])
   
   gamesturns = [] # For debugging.
@@ -242,7 +254,7 @@ def optout(playerid, optout_token)
   for gameid in games
     turn = nil
     db.transaction do |db|
-      turn = db.execute("select turn from gamestoplayers where gameid = ? and playerid = ? and time = ?", [gameid, playerid, 0])[0][0]
+      turn = db.execute("select turn from gamestoplayers where gameid = ? and playerid = ? and time = ?", [gameid, playerid, 0])[0][0].to_i
       db.execute("update gamestoplayers set active = 0 where gameid = ? and playerid = ? and time = ?", [gameid, playerid, 0])
       db.execute("update gamestoplayers set turn = 0 where gameid = ? and playerid = ? and time = ?", [gameid, playerid, 0])
       db.execute("update gamestoplayers set turn = turn - 1 where gameid = ? and turn > ?", [gameid, turn])
@@ -252,7 +264,7 @@ def optout(playerid, optout_token)
     send_email(gameid, turn)     
   end
   
-  template_data = IO.read('cgi-bin/templates/optedout.html.erb')
+  template_data = IO.read($template_path + 'optedout.html.erb')
   template = ERB.new(template_data)
   $cgi.out() { template.result(binding) }
 end
