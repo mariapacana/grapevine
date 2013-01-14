@@ -33,7 +33,7 @@ $sendmail = "/usr/bin/sendmail"
 $cgi = CGI.new
 $params = $cgi.params
 
-DB_FILENAME = "picdata.db"
+DB_FILENAME = "data/picdata.db"
 
 # Outputs a response as a JSON object.
 # 'success' is true or false.
@@ -179,8 +179,16 @@ def send_email(gameid,turn)
   end
   
   # Sends the email.
+  # - If maximum number of turns, step through all the emails.
   if $really_send_email
-    IO.popen($sendmail, 'w') do |file|
+    if (turn == maxturns + 1)
+      player_emails.each do |i|
+        IO.popen($sendmail i, 'w') do |file|
+          file.puts email_message
+        end
+      end
+    else
+      IO.popen($sendmail next_email, 'w') do |file|
       file.puts email_message
     end
   else
