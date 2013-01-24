@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--Copyright Maria Pacana 2013. All rights reserved.-->
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="description" content="Grapevine">
+  <meta name="keywords" content="telestrations, telephone pictionary, grapevine">
+  <link href='http://fonts.googleapis.com/css?family=Dosis|Dancing+Script:700|Galdeano' rel='stylesheet' type='text/css'>  
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>Grapevine</title>
+  <link href="resources/base.css" rel="stylesheet" type="text/css">
+</head>
+	
+<body onload="onload()">
+  <section> 
+    <header>  
+    Grapevine
+    </header>
+    <div id="howto">
+      <img id="close" src="images/close.png">
+      Grapevine is a drawing game that you can play with your friends! Draw a picture and write a caption for it. We'll send it to your friends, who will take turns drawing and writing. 
+    </div>
+		
+    <h1>1. Draw a picture.</h1>
+      <canvas id="myCanvas" class="picture" width="848" height="550"></canvas>
+      <button id="eraseAllButton">Clear</button>
+      <button id="eraseButton">Erase</button>
+			
+    <h1>2. Describe what you drew.</h1>
+      <input id="sentenceInput" class="sentence" type="text" maxlength=100>
+		
+    <h1>3. Start a game with your friends!</h1>
+      <div id = "emailDiv">
+      Email addresses: <input type="text" id="email"><br>
+      Note: Include your email address first and separate addresses with a comma or space.
+      <div id="recaptcha"></div>
+      <button id="submitButton">Submit</button>
+      <br>
+      </div>
+      <div id="status"></div>
+  	
+  <script type="text/javascript" src="util.js"></script>
+  <script type="text/javascript" src="draw.js"></script>
+  <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+  </section>
+</body>
+</html>

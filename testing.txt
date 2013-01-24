@@ -1,0 +1,2 @@
+right after turn selected, turn = 2gameid = 3
+playerid = 3

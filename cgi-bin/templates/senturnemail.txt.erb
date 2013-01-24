@@ -6,4 +6,4 @@ Hi there! Your friend <%= current_email %> sent you a drawing through Grapevine,
 
 Click the link here to play: <%= $page_path %>game.rb?cmd=show&gameid=<%= gameid %>&turn=<%= turn %>&token=<%= current_token %>
 
-Otherwise, you can (permanently) opt out of Grapevine games here: http://localhost:8000/cgi-bin/game.rb?cmd=optout&playerid=<%= next_playerid %>&optout_token=<%= next_optout_token %>
+Otherwise, you can (permanently) opt out of Grapevine games here: <%= $page_path %>game.rb?cmd=optout&playerid=<%= next_playerid %>&optout_token=<%= next_optout_token %>

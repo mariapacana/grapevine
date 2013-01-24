@@ -194,12 +194,12 @@ def send_email(gameid,turn)
   if $really_send_email
     if (turn == maxturns + 1)
       player_emails.each do |i|
-        IO.popen("$sendmail #{i}", 'w') do |file|
+        IO.popen("#{$sendmail} #{i}", 'w') do |file|
           file.puts email_message
         end
       end
     else
-      IO.popen("$sendmail #{next_email}", 'w') do |file|
+      IO.popen("#{$sendmail} #{next_email}", 'w') do |file|
         file.puts email_message
       end
     end
@@ -246,11 +246,11 @@ end
 def optout(playerid, optout_token)
   db = SQLite3::Database.new(DB_FILENAME)
 
-  games = db.execute("select gameid from gamestoplayers where playerid = ? and time = ?", [playerid, 0]).flatten.map {|g| g.to_i }
+  games = db.execute("select gameid from gamestoplayers where playerid = ? and time = ? and active = ?", [playerid, 0, 1]).flatten.uniq.map {|g| g.to_i }
   db.execute("update players set optedout = 1 where playerid = ? and optout_token = ?", [playerid, optout_token])
   
-  gamesturns = [] # For debugging.
-
+  gamesturns = [] 
+  
   for gameid in games
     turn = nil
     db.transaction do |db|
@@ -258,8 +258,8 @@ def optout(playerid, optout_token)
       db.execute("update gamestoplayers set active = 0 where gameid = ? and playerid = ? and time = ?", [gameid, playerid, 0])
       db.execute("update gamestoplayers set turn = 0 where gameid = ? and playerid = ? and time = ?", [gameid, playerid, 0])
       db.execute("update gamestoplayers set turn = turn - 1 where gameid = ? and turn > ?", [gameid, turn])
-      
-      gamesturns << "[" + gameid.to_s + "," + turn.to_s + "]" # For debugging.
+     
+    gamesturns << "[" + gameid.to_s + "," + turn.to_s + "]" # For debugging.
     end
     send_email(gameid, turn)     
   end
@@ -352,7 +352,7 @@ def main
     savepic(data, gameid, turn, time)
     send_email(gameid, turn+1)
   elsif (cmd == "optout") # Removes player from all games they are associated with.
-    playerid = $params["playerid"][0]
+    playerid = $params["playerid"][0].to_i
     optout_token = $params["optout_token"][0].to_i
     optout(playerid, optout_token)
   end
