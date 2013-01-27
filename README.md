@@ -8,4 +8,4 @@ Short to-do list (as of 1/27/13):
 - Build out the drawing features of the canvas (different pen colors/widths)
 - Finish cron.rb, which is a cron job that will clear out old games
 
-I created this game with substantial help and mentorship from Daniel Erat.
+This game could not have been created without the mentorship of Daniel Erat.
