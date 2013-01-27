@@ -17,6 +17,7 @@ def main
 
   db = SQLite3::Database.new(DB_FILENAME)
   
+  # NOTE: THIS IS NOT YET IMPLEMENTED.
   # Find all games where it has been over a week since the last turn was played.
   # - Find all unfinished games.
   
